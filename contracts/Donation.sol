@@ -2,59 +2,105 @@
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts@5.0.2/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-
-contract Donation is ERC721 {
+contract BloodTracker is ERC721 {
     uint256 private _nextTokenId;
 
-    enum Derivatives { RAW, PLASMA, ERYTHROCYTES, PLATELETS }
+    enum Role { DONATION_CENTER, LABORATORY, TRADER } //Otro enfoque seria con AccessControl
+    enum Derivative { RAW, PLASMA, ERYTHROCYTES, PLATELETS }
+    enum BloodType {ABp, ABm, Ap, Am, Bp, Bm, Op, Om}
+    enum AnalysisResult {Negative, Positive}
 
-    struct Data {
-        uint256 tokenId;
-        Derivatives derivative;
-        bool consumed;
+    // Unidades de sangre y hemoderivados
+    struct Product {
+        uint256 tokenIdOrigin;
+        Derivative derivative;
     }
 
-    // De momento almacenamos los balances a los que tienen derecho los donantes
-    // Luego se tendrá que habilitar una forma de que puedan transferir los fondos a una ONG registrada
-    mapping(address => uint) public balances; 
+    // Datos de donante
+    struct Donor {
+        BloodType bloodType; //No implementado
+        uint balance;
+    }
 
-    mapping(uint => Data) public datas;
+    // Datos de empresa
+    struct Company {
+        string name;
+        string location;
+        Role role;
+    }
+
+    mapping(uint tokenId => Product) public products;
+
+    mapping(address donorWallet => Donor) public donors;
+
+    mapping(address companyWallet => Company) public companies;
+
+    event Donation (address indexed donor, uint tokenId);
 
     constructor() ERC721("BLOOD", "BLD") {}
 
-    function donar(address _from, address _to) external payable returns (uint256) {
-        uint256 tokenId = _nextTokenId++;
-        balances[_from] = msg.value;
-        _mint(_to, tokenId);
+    // Función para registrar empresas
+    function signUp(string memory _name, string memory _location, Role _role) external {
+        require(bytes(companies[msg.sender].name).length == 0, "Already registered");
+        companies[msg.sender] = Company(_name, _location, _role);
+    }
 
-        datas[tokenId] = Data(0, Derivatives.RAW, false);
+    // Función principal para que los centros de extracción puedan crear una nueva donación
+    function donate(address _from, address _to) external payable returns (uint256) {
+        require(companies[msg.sender].role == Role.DONATION_CENTER, "Not donation center");
+        // Obtenemos nuevo Id de token
+        uint256 tokenId = _nextTokenId++;
+        // Sumamos los ethers al balance del donante
+        donors[_from].balance += msg.value;
+        // Creamos el token que representa la unidad de sangre
+        _safeMint(_to, tokenId);
+        // Guardamos los datos del token
+        products[tokenId] = Product(0, Derivative.RAW);
+
+        emit Donation(_from, tokenId);
 
         return tokenId;
     }
 
+    // Función para analisar la sangre -- PENDIENTE DE MOMENTO
+    // function analysis(uint _tokenId, AnalysisResult _result) external {
+    //     require(_ownerOf(_tokenId) == msg.sender, "Not owner");
+    //     require(companies[msg.sender].role == Role.LABORATORY, "Not laboratory");
+    //     require(products[_tokenId].derivative == Derivative.RAW, "Not raw blood");
+    //     if (_result == AnalysisResult.Positive){
+            
+    //     } else {
+    //         _burn(_tokenId);
+    //     }
+    // }
+
+    // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
     function process(uint256 _tokenId) external returns (uint256, uint256, uint256)  {
         require(_ownerOf(_tokenId) == msg.sender, "Not owner");
-        require(!datas[_tokenId].consumed, "Already processed");
-        uint256 idPlasma = generate(_tokenId, Derivatives.PLASMA);
-        uint256 idErythrocyte = generate(_tokenId, Derivatives.ERYTHROCYTES);
-        uint256 idPlatelet = generate(_tokenId, Derivatives.PLATELETS);
+        require(companies[msg.sender].role == Role.LABORATORY, "Not laboratory");
+        uint256 idPlasma = createDerivative(_tokenId, Derivative.PLASMA);
+        uint256 idErythrocyte = createDerivative(_tokenId, Derivative.ERYTHROCYTES);
+        uint256 idPlatelet = createDerivative(_tokenId, Derivative.PLATELETS);
 
-        datas[_tokenId].consumed = true;
+        _burn(_tokenId);
 
         return (idPlasma, idErythrocyte, idPlatelet);
     }
 
+    // Función para que los traders puedan consumir la sangre
     function consume(uint _tokenId) external {
         require(_ownerOf(_tokenId) == msg.sender, "Not owner");
-        require(!datas[_tokenId].consumed, "Already consumed");
-        datas[_tokenId].consumed = true;
+        require(companies[msg.sender].role == Role.TRADER, "Not trader");
+        _burn(_tokenId);
     }
 
-    function generate(uint _tokenIdOrigen, Derivatives _derivative) private returns (uint256) {
+
+    // Función para generar hemoderivados
+    function createDerivative(uint _tokenIdOrigen, Derivative _derivative) private returns (uint256) {
         uint256 tokenId = _nextTokenId++;
-        datas[tokenId] = Data(_tokenIdOrigen, _derivative, false);
+        products[tokenId] = Product(_tokenIdOrigen, _derivative);
         _mint(msg.sender, tokenId);
 
         return tokenId;
