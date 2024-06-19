@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
 
@@ -22,19 +24,27 @@ const MetaMaskWallet: React.FC = () => {
           window.ethereum.on('accountsChanged', (accounts: string[]) => {
             setAccount(accounts[0]);
           });
+
+          window.ethereum.on('disconnect', () => {
+            setAccount(null);
+          });
         } catch (error) {
           console.error('User denied account access');
         }
-      } else if (window.web3) {
-        const web3 = new Web3(window.web3.currentProvider);
-        const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
       } else {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
       }
     };
 
     loadWeb3();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      if (window.ethereum && window.ethereum.removeListener) {
+        window.ethereum.removeListener('accountsChanged', setAccount);
+        window.ethereum.removeListener('disconnect', setAccount);
+      }
+    };
   }, []);
 
   return (

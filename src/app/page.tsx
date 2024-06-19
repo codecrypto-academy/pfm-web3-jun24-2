@@ -1,4 +1,4 @@
-import ConnectWallet from '@/componets/ConnectWallet'
+import ConnectWallet from '@/components/ConnectWallet'
 
 export default function Home() {
   return <div className='bg-slate-500 h-screen grid content-center justify-center'>
