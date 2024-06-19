@@ -48,14 +48,14 @@ contract BloodTracker is ERC721 {
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
-    function donate(address _from, address _to) external payable returns (uint256) {
+    function donate(address _from) external payable returns (uint256) {
         require(companies[msg.sender].role == Role.DONATION_CENTER, "Not donation center");
         // Obtenemos nuevo Id de token
         uint256 tokenId = _nextTokenId++;
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
-        _safeMint(_to, tokenId);
+        _safeMint(msg.sender, tokenId);
         // Guardamos los datos del token
         products[tokenId] = Product(0, Derivative.RAW);
 
@@ -63,6 +63,9 @@ contract BloodTracker is ERC721 {
 
         return tokenId;
     }
+
+    //Funcion para transferir del CENTRO al LABORATORIO. Evitando que se envie a otras compañias.
+    //override de las funciones transfer y safeTransfer
 
     // Función para analisar la sangre -- PENDIENTE DE MOMENTO
     // function analysis(uint _tokenId, AnalysisResult _result) external {
@@ -89,7 +92,11 @@ contract BloodTracker is ERC721 {
         return (idPlasma, idErythrocyte, idPlatelet);
     }
 
-    // Función para que los traders puedan consumir la sangre
+    //MakerPlace:
+        //Poner en venta
+        //Comprar lo que esté en venta
+
+    // Función para que los traders puedan consumir el hemoderivado
     function consume(uint _tokenId) external {
         require(_ownerOf(_tokenId) == msg.sender, "Not owner");
         require(companies[msg.sender].role == Role.TRADER, "Not trader");
