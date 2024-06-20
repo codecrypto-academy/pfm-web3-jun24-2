@@ -7,7 +7,6 @@ contract BloodTracker {
     error BloodTracker__NotOwner();
     error BloodTracker__IncorrectRole(Role required, Role yourRole);
 
-    uint256 private nextTokenId;
     Blood bld;
     enum Role {
         DONATION_CENTER,

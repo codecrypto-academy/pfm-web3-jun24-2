@@ -6,6 +6,8 @@ import {ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Blood is ERC721, ERC721Enumerable, Ownable {
+    uint256 private nextTokenId;
+
     constructor()
         // address initialOwner
         ERC721("Blood", "BLD")
@@ -16,8 +18,9 @@ contract Blood is ERC721, ERC721Enumerable, Ownable {
         super._burn(tokenId);
     }
 
-    function mint(address to, uint256 tokenId) external onlyOwner {
-        super._safeMint(to, tokenId);
+    function mint(address to) external onlyOwner {
+        super._safeMint(to, nextTokenId);
+        nextTokenId++;
     }
 
     function _increaseBalance(
