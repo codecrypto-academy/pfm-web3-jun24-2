@@ -1,19 +1,17 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import React from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
-export const metadata: Metadata = {
-  title: "Blood Tracker",
-  description: "Follow the donation trace",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div id="root" className="main-container">
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
