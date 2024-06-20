@@ -8,7 +8,8 @@ const MainBody = () => {
       <FeatureTopBody />
       <div className="header-section">
         <h1>
-          Your trusted partner in tracing blood donation with{" "}
+          Your trusted partner in{" "}
+          <span className="highlight">tracing blood donation</span> with{" "}
           <span className="highlight">blockchain</span> solutions.
         </h1>
         <p>

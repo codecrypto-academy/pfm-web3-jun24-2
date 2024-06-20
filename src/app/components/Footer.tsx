@@ -8,7 +8,16 @@ const Footer = () => {
       <div className="container">
         <div className="footer-section">
           <div className="footer-column">
-            <img src="logo.png" alt="Logo" className="footer-logo" />
+            <div className="logo-container">
+              <img
+                src="/cadena-de-bloques.png"
+                alt="Logo"
+                className="logo-image"
+              />
+              <Link href="https://codecrypto.academy/" legacyBehavior>
+                <a className="logo-text">codecrypto.academy</a>
+              </Link>
+            </div>
             <p>Masters en Blockchain & Web3</p>
             <p>Sé referente Blockchain en 12 meses</p>
             <p>100+ Alumnos Formados 8º Ed</p>
@@ -22,19 +31,23 @@ const Footer = () => {
           </div>
           <div className="footer-column">
             <h3>Let's Get in Touch</h3>
-            <Link href="/get-in-touch">
-              <div className="feature-buttons">
-                <button className="feature-button-footer">Let's Go</button>
-              </div>
+            <Link href="/get-in-touch" legacyBehavior>
+              <a className="feature-button-footer">Let's Go</a>
             </Link>
           </div>
         </div>
         <div className="footer-bottom">
           <p>© 2024 Blood Donation Traceability. All rights reserved.</p>
           <div className="footer-links">
-            <Link href="#">Terms of Service</Link>
-            <Link href="#">Trademark Policy</Link>
-            <Link href="#">Privacy Policy</Link>
+            <Link href="#" legacyBehavior>
+              <a>Terms of Service</a>
+            </Link>
+            <Link href="#" legacyBehavior>
+              <a>Trademark Policy</a>
+            </Link>
+            <Link href="#" legacyBehavior>
+              <a>Privacy Policy</a>
+            </Link>
           </div>
         </div>
       </div>

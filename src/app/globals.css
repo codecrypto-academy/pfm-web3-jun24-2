@@ -82,6 +82,7 @@ body {
   flex: 1;
   max-width: 600px;
   margin-right: 20px;
+  margin-left: 40px;
 }
 
 .feature-text h2 {
@@ -298,18 +299,18 @@ body {
 .logo-container {
   display: flex;
   align-items: center;
-  margin-left: 0.1rem; /* Reduced margin-left */
+  margin-left: -3rem;
 }
 
 .logo-image {
   width: 40px;
   height: 40px;
-  margin-right: 0.5rem; /* Reduced margin-right */
+  margin-right: 0.8rem;
 }
 
 .logo-text {
   font-weight: bold;
-  font-size: 1.5rem; /* Increased font size */
+  font-size: 1.8rem; /* Increased font size */
   margin-right: 1rem;
   color: white;
 }
@@ -317,12 +318,12 @@ body {
 .nav-links {
   display: flex;
   gap: 2rem; /* Increased gap for more spacing */
-  margin-left: auto; /* Push the nav links to the right */
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
+  margin-right: 1.3rem; /* Push the nav links to the right */
   font-size: 1.125rem; /* Increased font size */
   transition: color 0.3s;
 }
@@ -332,6 +333,7 @@ body {
 }
 
 .dropdown {
+  margin-top: auto;
   position: relative;
   display: inline-block;
 }

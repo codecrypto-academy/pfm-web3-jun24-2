@@ -99,10 +99,7 @@ const Form = () => {
         </form>
       </div>
       <div className="form-image">
-        <img
-          src="./../../../public/people-positive.jpg"
-          alt="Your Image Description"
-        />
+        <img src="/people-positive.jpg" />
       </div>
     </div>
   );

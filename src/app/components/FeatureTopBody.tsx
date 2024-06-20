@@ -7,7 +7,7 @@ const FeatureTopBody = () => {
   return (
     <div className="feature-section">
       <div className="feature-image">
-        <img src="./../../../public/AllchainBlod.jpg" alt="Blockchain Image" />
+        <img src="/AllchainBlod.jpg" alt="Blockchain Image" />
       </div>
       <div className="feature-text">
         <h2>Solutions that Adapt & Endure</h2>

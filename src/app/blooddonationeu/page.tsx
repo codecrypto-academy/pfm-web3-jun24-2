@@ -3,7 +3,7 @@ export default function BloodDonationeu() {
     <div>
       <h2>Blood Donation in Europe</h2>
       <ul>
-        <li>En Construccion</li>
+        <li>Building Up...</li>
         <li>Blood Donation View</li>
       </ul>
     </div>
