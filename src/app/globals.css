@@ -289,6 +289,7 @@ body {
 
 .nav-container {
   max-width: 1200px;
+  height: 4rem;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -299,32 +300,33 @@ body {
 .logo-container {
   display: flex;
   align-items: center;
-  margin-left: -3rem;
+  margin-left: -12rem;
 }
 
 .logo-image {
   width: 40px;
   height: 40px;
-  margin-right: 0.8rem;
+  margin-right: 1rem;
 }
 
 .logo-text {
   font-weight: bold;
-  font-size: 1.8rem; /* Increased font size */
+  font-size: 2rem; /* Increased font size */
   margin-right: 1rem;
   color: white;
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem; /* Increased gap for more spacing */
+  gap: 3rem;
+  margin-right: -22rem;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
-  margin-right: 1.3rem; /* Push the nav links to the right */
-  font-size: 1.125rem; /* Increased font size */
+  margin-right: 1rem;
+  font-size: 1.6rem; /* Increased font size */
   transition: color 0.3s;
 }
 
