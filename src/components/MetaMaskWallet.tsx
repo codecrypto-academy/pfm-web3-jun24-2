@@ -14,7 +14,8 @@ const MetaMaskWallet: React.FC = () => {
   const [account, setAccount] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
   const router = useRouter();
-  const { role } = router.query;
+  const searchParams = useSearchParams();
+  const role = searchParams.get('role');
 
   useEffect(() => {
     const loadWeb3 = async () => {
@@ -58,7 +59,7 @@ const MetaMaskWallet: React.FC = () => {
 
   const checkRegistration = async (wallet: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/isStakeholderRegistered/${wallet}`);
+      const response = await fetch(`/api/isStakeholderRegistered?wallet=${wallet}`);
       const data = await response.json();
       setIsRegistered(data.registered);
     } catch (error) {
@@ -69,7 +70,7 @@ const MetaMaskWallet: React.FC = () => {
   const registerStakeholder = async () => {
     if (account && role) {
       try {
-        const response = await fetch('http://localhost:3001/registerStakeholder', {
+        const response = await fetch('/api/registerStakeholder', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

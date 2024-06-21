@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
-const Home: React.FC = () => {
+const MetaMaskPage: React.FC = () => {
   const [role, setRole] = useState<string>('');
   const router = useRouter();
 
@@ -35,4 +35,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default MetaMaskPage;

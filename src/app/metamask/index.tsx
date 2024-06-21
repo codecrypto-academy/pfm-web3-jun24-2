@@ -3,7 +3,7 @@
 import React from 'react';
 import MetaMaskWallet from '@/components/MetaMaskWallet';
 
-const MetaMaskPage: React.FC = () => {
+const MetaMask: React.FC = () => {
   return (
     <div>
       <h1>MetaMask Wallet</h1>
@@ -12,4 +12,4 @@ const MetaMaskPage: React.FC = () => {
   );
 };
 
-export default MetaMaskPage;
+export default MetaMask;
