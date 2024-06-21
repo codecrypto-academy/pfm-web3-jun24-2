@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
+import { useRouter } from 'next/router';
 
 declare global {
   interface Window {
@@ -11,6 +12,9 @@ declare global {
 
 const MetaMaskWallet: React.FC = () => {
   const [account, setAccount] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
+  const router = useRouter();
+  const { role } = router.query;
 
   useEffect(() => {
     const loadWeb3 = async () => {
@@ -23,11 +27,17 @@ const MetaMaskWallet: React.FC = () => {
 
           window.ethereum.on('accountsChanged', (accounts: string[]) => {
             setAccount(accounts[0]);
+            checkRegistration(accounts[0]);
           });
 
           window.ethereum.on('disconnect', () => {
             setAccount(null);
+            setIsRegistered(null);
           });
+
+          if (accounts.length > 0) {
+            checkRegistration(accounts[0]);
+          }
         } catch (error) {
           console.error('User denied account access');
         }
@@ -38,7 +48,6 @@ const MetaMaskWallet: React.FC = () => {
 
     loadWeb3();
 
-    // Clean up the event listener when the component unmounts
     return () => {
       if (window.ethereum && window.ethereum.removeListener) {
         window.ethereum.removeListener('accountsChanged', setAccount);
@@ -47,10 +56,53 @@ const MetaMaskWallet: React.FC = () => {
     };
   }, []);
 
+  const checkRegistration = async (wallet: string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/isStakeholderRegistered/${wallet}`);
+      const data = await response.json();
+      setIsRegistered(data.registered);
+    } catch (error) {
+      console.error('Error checking registration:', error);
+    }
+  };
+
+  const registerStakeholder = async () => {
+    if (account && role) {
+      try {
+        const response = await fetch('http://localhost:3001/registerStakeholder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ wallet: account, stakeholderType: parseInt(role as string), info: `${role} Information` }),
+        });
+        const data = await response.json();
+        if (data.message) {
+          setIsRegistered(true);
+        }
+      } catch (error) {
+        console.error('Error registering stakeholder:', error);
+      }
+    }
+  };
+
   return (
     <div>
+      <h2>MetaMask Wallet</h2>
       {account ? (
-        <p>Connected Account: {account}</p>
+        <div>
+          <p>Connected Account: {account}</p>
+          {isRegistered !== null && (
+            isRegistered ? (
+              <p>You are registered as a stakeholder.</p>
+            ) : (
+              <div>
+                <p>You are not registered.</p>
+                <button onClick={registerStakeholder}>Register as {role}</button>
+              </div>
+            )
+          )}
+        </div>
       ) : (
         <p>Please connect your MetaMask wallet.</p>
       )}
