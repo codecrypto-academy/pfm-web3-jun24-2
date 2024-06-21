@@ -4,6 +4,12 @@ test = "foundry/test"
 out = "foundry/out"
 cache_path = "foundry/cache"
 libs = ["foundry/lib"]
+solc = "0.8.18"
+
+[fmt]
+single_line_statement_blocks = "single"
+override_spacing = false
+line_length = 150
 
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

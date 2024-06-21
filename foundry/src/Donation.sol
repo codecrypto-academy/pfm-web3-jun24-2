@@ -7,10 +7,31 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract BloodTracker is ERC721 {
     uint256 private _nextTokenId;
 
-    enum Role { DONATION_CENTER, LABORATORY, TRADER } //Otro enfoque seria con AccessControl
-    enum Derivative { RAW, PLASMA, ERYTHROCYTES, PLATELETS }
-    enum BloodType {ABp, ABm, Ap, Am, Bp, Bm, Op, Om}
-    enum AnalysisResult {Negative, Positive}
+    enum Role {
+        DONATION_CENTER,
+        LABORATORY,
+        TRADER
+    } //Otro enfoque seria con AccessControl
+    enum Derivative {
+        RAW,
+        PLASMA,
+        ERYTHROCYTES,
+        PLATELETS
+    }
+    enum BloodType {
+        ABp,
+        ABm,
+        Ap,
+        Am,
+        Bp,
+        Bm,
+        Op,
+        Om
+    }
+    enum AnalysisResult {
+        Negative,
+        Positive
+    }
 
     // Unidades de sangre y hemoderivados
     struct Product {
@@ -21,7 +42,7 @@ contract BloodTracker is ERC721 {
     // Datos de donante
     struct Donor {
         BloodType bloodType; //No implementado
-        uint balance;
+        uint256 balance;
     }
 
     // Datos de empresa
@@ -31,13 +52,13 @@ contract BloodTracker is ERC721 {
         Role role;
     }
 
-    mapping(uint tokenId => Product) public products;
+    mapping(uint256 tokenId => Product) public products;
 
     mapping(address donorWallet => Donor) public donors;
 
     mapping(address companyWallet => Company) public companies;
 
-    event Donation (address indexed donor, uint tokenId);
+    event Donation(address indexed donor, uint256 tokenId);
 
     constructor() ERC721("BLOOD", "BLD") {}
 
@@ -73,14 +94,14 @@ contract BloodTracker is ERC721 {
     //     require(companies[msg.sender].role == Role.LABORATORY, "Not laboratory");
     //     require(products[_tokenId].derivative == Derivative.RAW, "Not raw blood");
     //     if (_result == AnalysisResult.Positive){
-            
+
     //     } else {
     //         _burn(_tokenId);
     //     }
     // }
 
     // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
-    function process(uint256 _tokenId) external returns (uint256, uint256, uint256)  {
+    function process(uint256 _tokenId) external returns (uint256, uint256, uint256) {
         require(_ownerOf(_tokenId) == msg.sender, "Not owner");
         require(companies[msg.sender].role == Role.LABORATORY, "Not laboratory");
         uint256 idPlasma = createDerivative(_tokenId, Derivative.PLASMA);
@@ -93,19 +114,18 @@ contract BloodTracker is ERC721 {
     }
 
     //MakerPlace:
-        //Poner en venta
-        //Comprar lo que esté en venta
+    //Poner en venta
+    //Comprar lo que esté en venta
 
     // Función para que los traders puedan consumir el hemoderivado
-    function consume(uint _tokenId) external {
+    function consume(uint256 _tokenId) external {
         require(_ownerOf(_tokenId) == msg.sender, "Not owner");
         require(companies[msg.sender].role == Role.TRADER, "Not trader");
         _burn(_tokenId);
     }
 
-
     // Función para generar hemoderivados
-    function createDerivative(uint _tokenIdOrigen, Derivative _derivative) private returns (uint256) {
+    function createDerivative(uint256 _tokenIdOrigen, Derivative _derivative) private returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         products[tokenId] = Product(_tokenIdOrigen, _derivative);
         _mint(msg.sender, tokenId);
@@ -113,7 +133,3 @@ contract BloodTracker is ERC721 {
         return tokenId;
     }
 }
-
-
-
-

@@ -8,6 +8,7 @@ contract BloodTracker {
     error BloodTracker__IncorrectRole(Role required, Role yourRole);
 
     Blood bld;
+
     enum Role {
         DONATION_CENTER,
         LABORATORY,
@@ -43,7 +44,7 @@ contract BloodTracker {
     // Datos de donante
     struct Donor {
         BloodType bloodType; //No implementado
-        uint balance;
+        uint256 balance;
     }
 
     // Datos de empresa
@@ -53,28 +54,21 @@ contract BloodTracker {
         Role role;
     }
 
-    mapping(uint tokenId => Product) public products;
+    mapping(uint256 tokenId => Product) public products;
 
     mapping(address donorWallet => Donor) public donors;
 
     mapping(address companyWallet => Company) public companies;
 
-    event Donation(address indexed donor, uint tokenId);
+    event Donation(address indexed donor, uint256 tokenId);
 
     modifier tokenOwner(uint256 tokenId) {
-        if (bld.ownerOf(tokenId) != msg.sender) {
-            revert BloodTracker__NotOwner();
-        }
+        if (bld.ownerOf(tokenId) != msg.sender) revert BloodTracker__NotOwner();
         _;
     }
 
     modifier onlyRole(Role role) {
-        if (companies[msg.sender].role != role) {
-            revert BloodTracker__IncorrectRole(
-                role,
-                companies[msg.sender].role
-            );
-        }
+        if (companies[msg.sender].role != role) revert BloodTracker__IncorrectRole(role, companies[msg.sender].role);
         _;
     }
 
@@ -83,27 +77,14 @@ contract BloodTracker {
     }
 
     // Función para registrar empresas
-    function signUp(
-        string memory _name,
-        string memory _location,
-        Role _role
-    ) external {
-        require(
-            bytes(companies[msg.sender].name).length == 0,
-            "Already registered"
-        );
+    function signUp(string memory _name, string memory _location, Role _role) external {
+        require(bytes(companies[msg.sender].name).length == 0, "Already registered");
         companies[msg.sender] = Company(_name, _location, _role);
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
-    function donate(
-        address _from,
-        address _to
-    ) external payable returns (uint256) {
-        require(
-            companies[msg.sender].role == Role.DONATION_CENTER,
-            "Not donation center"
-        );
+    function donate(address _from, address _to) external payable returns (uint256) {
+        require(companies[msg.sender].role == Role.DONATION_CENTER, "Not donation center");
         // Obtenemos nuevo Id de token
         uint256 tokenId = nextTokenId++;
         // Sumamos los ethers al balance del donante
@@ -131,19 +112,9 @@ contract BloodTracker {
     // }
 
     // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
-    function process(
-        uint256 _tokenId
-    )
-        external
-        tokenOwner(_tokenId)
-        onlyRole(Role.LABORATORY)
-        returns (uint256, uint256, uint256)
-    {
+    function process(uint256 _tokenId) external tokenOwner(_tokenId) onlyRole(Role.LABORATORY) returns (uint256, uint256, uint256) {
         uint256 idPlasma = createDerivative(_tokenId, Derivative.PLASMA);
-        uint256 idErythrocyte = createDerivative(
-            _tokenId,
-            Derivative.ERYTHROCYTES
-        );
+        uint256 idErythrocyte = createDerivative(_tokenId, Derivative.ERYTHROCYTES);
         uint256 idPlatelet = createDerivative(_tokenId, Derivative.PLATELETS);
 
         bld.burn(_tokenId);
@@ -152,17 +123,12 @@ contract BloodTracker {
     }
 
     // Función para que los traders puedan consumir la sangre
-    function consume(
-        uint _tokenId
-    ) external tokenOwner(_tokenId) onlyRole(Role.TRADER) {
+    function consume(uint256 _tokenId) external tokenOwner(_tokenId) onlyRole(Role.TRADER) {
         bld.burn(_tokenId);
     }
 
     // Función para generar hemoderivados
-    function createDerivative(
-        uint _tokenIdOrigen,
-        Derivative _derivative
-    ) private returns (uint256) {
+    function createDerivative(uint256 _tokenIdOrigen, Derivative _derivative) private returns (uint256) {
         uint256 tokenId = nextTokenId++;
         products[tokenId] = Product(_tokenIdOrigen, _derivative);
         bld.mint(msg.sender, tokenId);
