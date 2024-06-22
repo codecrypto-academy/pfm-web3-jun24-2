@@ -1,12 +1,15 @@
-import React from 'react';
-import MetaMaskWallet from '@/components/MetaMaskWallet';
+import React from "react";
+import MetaMaskWallet from "./../../components/MetaMaskWallet";
+import { AppContainer } from "../layout";
 
 const MetaMaskPage: React.FC = () => {
   return (
-    <div>
-      <h1>MetaMask Wallet</h1>
-      <MetaMaskWallet />
-    </div>
+    <AppContainer>
+      <div>
+        <h1>MetaMask Wallet</h1>
+        <MetaMaskWallet />
+      </div>
+    </AppContainer>
   );
 };
 

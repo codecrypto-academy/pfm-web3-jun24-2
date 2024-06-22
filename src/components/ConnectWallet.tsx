@@ -1,9 +1,8 @@
-'use client'
-import {saludar} from '../data'
+"use client";
 
-export default function() {
-    return <button 
-        onClick={() => saludar()}>
-            Soy un boton
-    </button>
+import React from "react";
+import { saludar } from "../data";
+
+export default function () {
+  return <button onClick={() => saludar()}>Soy un boton</button>;
 }

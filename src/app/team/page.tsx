@@ -1,13 +1,16 @@
+import { AppContainer } from "../layout";
+import BuildingUp from "@/components/BuildingUp";
+import "./../globals.css";
+
 export default function Team() {
   return (
-    <div>
-      <h2>Team</h2>
-      <ul>
-        <li>Member 1</li>
-        <li>Member 2</li>
-        <li>Member 3</li>
-        <li>Member 4</li>
-      </ul>
-    </div>
+    <AppContainer>
+      <div className="feature-buildingup">
+        <div className="feature-buildingup-text">
+          <h2>Team</h2>
+        </div>
+        <BuildingUp />
+      </div>
+    </AppContainer>
   );
 }

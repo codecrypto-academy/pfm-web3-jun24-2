@@ -1,11 +1,13 @@
 import React from "react";
-import Form from "./../components/Form";
+import Form from "./../../components/Form";
 
 const GetInTouchPage = () => {
   return (
-    <div>
-      <Form />
-    </div>
+    <AppContainer>
+      <div>
+        <Form />
+      </div>
+    </AppContainer>
   );
 };
 

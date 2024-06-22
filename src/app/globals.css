@@ -35,15 +35,6 @@ body {
   margin-bottom: 20px;
 }
 
-.learn-more-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #503291;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
 /* Ensure the root container and main container allow for full height */
 #root,
 .main-container {
@@ -59,84 +50,71 @@ body {
   justify-content: space-between;
 }
 
-/* Other styling */
-.header-section,
-.feature-section,
-.features-section,
-.footer-section {
-  padding: 20px;
-  color: #fff;
-}
-
-/* Feature Section Styles */
-.feature-section {
+/* FeatureTopBody Section Styles */
+.feature-topbody-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 50px;
-  background-color: #fff; /* Set background to white */
-  color: #000; /* Set text color to black */
+  background-color: #fff;
+  color: #000;
 }
 
-.feature-text {
+.feature-topbody-text {
   flex: 1;
   max-width: 600px;
   margin-right: 20px;
   margin-left: 40px;
 }
 
-.feature-text h2 {
+.feature-topbody-text h2 {
   font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
-.feature-text h1 {
+.feature-topbody-text h1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
 }
 
-.feature-text .highlight {
+.feature-topbody-text .highlight {
   color: #a1ff0a;
 }
 
-.feature-text p {
+.feature-topbody-text p {
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
-.feature-buttons {
+.feature-topbody-buttons {
   display: flex;
   gap: 10px;
 }
 
-.feature-button {
+.feature-topbody-button {
+  background-color: white;
   padding: 10px 20px;
-  border: 1px solid #000; /* Adjust border color */
-  background: none;
-  color: #000; /* Adjust text color */
+  border: 1px solid #000;
+  color: #000;
   text-transform: uppercase;
   letter-spacing: 1.8px;
-  transition: background 0.3s ease, color 0.3s ease;
   cursor: pointer;
-}
-
-.feature-button-footer {
-  padding: 10px 20px;
-  border: 1px solid #ffffff;
-  background: none;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  font-size: 1rem;
+  margin-right: 3.5%;
+  font-weight: bold;
   transition: background 0.3s ease, color 0.3s ease;
-  cursor: pointer;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }
 
-.feature-button:hover {
-  background: #000;
-  color: #fff;
+.feature-topbody-button:hover {
+  background-color: #15011d;
+  color: rgb(255, 255, 255);
 }
 
-.feature-image {
+.feature-topbody-image {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -144,7 +122,7 @@ body {
   margin-left: 20px;
 }
 
-.feature-image img {
+.feature-topbody-image img {
   max-width: 100%;
   height: auto;
 }
@@ -165,7 +143,7 @@ body {
 }
 
 .header-section h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   line-height: 1.2;
   color: #010d00;
 }
@@ -179,61 +157,58 @@ body {
   margin: 1.5rem 0;
 }
 
-.learn-more-button {
-  background-color: white;
-  color: black;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.learn-more-button:hover {
-  background-color: #f0f0f0;
-}
-
 .features-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2.5rem;
-  margin-top: 1rem;
-  justify-content: center;
+  padding: 3.5%;
+  /* justify-content: center; */
+  /* border: solid 3px black; */
+  /* text-align: center; */
 }
 
 .feature-box {
   height: 300px;
   width: 100%;
-  padding: 1rem;
-  border-radius: 8px;
+  display: flex;
+  border-radius: 10px;
   color: white;
-  background-color: #333;
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  /* border: solid 3px rgb(152, 49, 49); */
 }
 
 .feature-box h2 {
-  font-size: 2.5rem;
+  /* border: solid 3px rgb(152, 49, 49); */
+  font-size: 2.8rem;
+  top: 75%;
+  margin: 1rem auto;
   text-align: center;
+  margin-bottom: 1rem;
   position: relative;
   z-index: 1;
-  transition: opacity 0.3s ease;
+  transition: top 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.feature-box:hover h2 {
+  top: 7%;
+  transform: translateY(0);
 }
 
 .feature-box p {
   position: absolute;
+  text-align: center;
+  font-size: 1.3rem;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
-  transition: opacity 0.3s ease;
-  text-align: center;
-  font-size: 1.8rem;
+  transition: top 0.3s ease, opacity 0.3s ease;
 }
 
 .feature-box:hover p {
-  opacity: 1;
+  opacity: 2;
 }
 
 .scalable {
@@ -275,32 +250,44 @@ body {
   }
 
   .feature-box {
-    width: 100%; /* Make boxes full-width on small screens */
+    width: 100%;
   }
 }
 
 /* Header Styles */
 
+.app-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-wrapper {
+  max-width: 1580px;
+  width: 100%;
+  @media (max-width: 1650px) {
+    width: 90%;
+  }
+}
+
 .header {
   background-color: #503291;
-  width: 100%;
-  padding: 1rem 0;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-container {
-  max-width: 1200px;
-  height: 4rem;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  margin-left: -12rem;
 }
 
 .logo-image {
@@ -311,7 +298,7 @@ body {
 
 .logo-text {
   font-weight: bold;
-  font-size: 2rem; /* Increased font size */
+  font-size: 2rem;
   margin-right: 1rem;
   color: white;
 }
@@ -319,19 +306,18 @@ body {
 .nav-links {
   display: flex;
   gap: 3rem;
-  margin-right: -22rem;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
   margin-right: 1rem;
-  font-size: 1.6rem; /* Increased font size */
+  font-size: 1.4rem;
   transition: color 0.3s;
 }
 
 .nav-link:hover {
-  color: #b3c2bf; /* Hover text color */
+  color: #b3c2bf;
 }
 
 .dropdown {
@@ -368,8 +354,6 @@ body {
 .footer {
   background-color: #503291;
   color: white;
-  padding: 2rem 0;
-  margin-top: 5rem;
 }
 
 .container {
@@ -382,13 +366,28 @@ body {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #eb3c96;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
+  padding: 30px 0;
 }
 
 .footer-column {
   flex: 1;
-  margin: 0 1rem;
+  padding-right: 20px;
+  /* p {
+    border: solid 1px black;
+  } */
+  /* border: solid 1px black; */
+  /* padding: 0 20px; */
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
 }
 
 .footer-title {
@@ -415,7 +414,8 @@ body {
 
 .footer-bottom {
   text-align: center;
-  padding-top: 0.2rem;
+  padding-top: 1rem;
+  padding-bottom: 2.5rem;
 }
 
 .footer-links {
@@ -435,6 +435,42 @@ body {
   color: #b3c2bf;
 }
 
+.logo-text-footer {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+  color: rgb(251, 249, 249);
+}
+
+.feature-button-footer-container {
+  margin-top: 15px;
+}
+
+.feature-button-footer {
+  padding: 10px 20px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffffff;
+  background: none;
+  color: #faf7f7;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: background 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  transition: background-color 0.3s;
+}
+
+.feature-button-footer:hover {
+  background-color: #15011d;
+  border: none;
+}
+
 /* Form Style*/
 
 .form-page {
@@ -443,7 +479,6 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background-color: #f5f5f5;
 }
 
 .form-content {
@@ -475,7 +510,7 @@ body {
   flex-direction: column;
   width: 100%;
   max-width: 600px;
-  background-color: white;
+  background-color: #f5f5f5;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -537,17 +572,45 @@ body {
   border-radius: 8px;
 }
 
-.get-in-touch-button {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  background-color: #503291;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+/* BuildingUp Styles */
+.feature-buildingup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5%;
 }
 
-.get-in-touch-button:hover {
-  background-color: #40257a;
+.feature-buildingup-text {
+  flex: 1;
+  max-width: 150%;
+  padding: 20px;
+}
+
+.feature-buildingup-text h2 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.feature-buildingup-text ul {
+  padding-left: 20px;
+}
+
+.feature-buildingup-text li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.feature-buildingup-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 50%;
+}
+
+.feature-buildingup-image img {
+  max-width: 5%;
+  height: auto;
+  display: block;
 }
