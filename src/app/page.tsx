@@ -1,5 +1,5 @@
 import React from "react";
-import MainBody from "./components/MainBody";
+import MainBody from "./../components/MainBody";
 
 const HomePage = () => (
   <div className="flex flex-col min-h-screen">
@@ -10,4 +10,3 @@ const HomePage = () => (
 );
 
 export default HomePage;
-
