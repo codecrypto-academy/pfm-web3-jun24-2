@@ -7,7 +7,7 @@ export default function Team() {
     <AppContainer>
       <div className="feature-buildingup">
         <div className="feature-buildingup-text">
-          <h2>Inspiration Histories</h2>
+          <h2>Inspiration Stories</h2>
         </div>
         <BuildingUp />
       </div>

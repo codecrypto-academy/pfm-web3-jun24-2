@@ -38,7 +38,7 @@ const Header = () => (
                 We can help you with
               </Link>
               <Link href="/inspirations" className="dropdown-link">
-                Inspiration Histories
+                Inspiration Stories
               </Link>
             </div>
           </div>
