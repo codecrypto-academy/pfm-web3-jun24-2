@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import connect from "./connect";
 
 const MetaMaskPage: React.FC = () => {
   const [role, setRole] = useState<string>('');
@@ -13,7 +14,8 @@ const MetaMaskPage: React.FC = () => {
 
   const handleSubmit = () => {
     if (role) {
-      router.push(`/metamask?role=${role}`);
+  //    router.push(`/metamask/connect?role=${role}`);
+      router.push(`/connect?role=${role}`);
     } else {
       alert('Por favor, selecciona un rol antes de continuar.');
     }

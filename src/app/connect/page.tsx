@@ -10,14 +10,22 @@ declare global {
   }
 }
 
-const MetaMaskWallet: React.FC = () => {
+const Connect: React.FC = () => {
   const [account, setAccount] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const role = searchParams.get('role');
 
   useEffect(() => {
+    const roleParam = searchParams.get('role');
+    if (roleParam) {
+      setRole(roleParam);
+    } else {
+      setErrorMessage('Role no proporcionado');
+    }
+
     const loadWeb3 = async () => {
       if (window.ethereum) {
         const web3 = new Web3(window.ethereum);
@@ -28,7 +36,9 @@ const MetaMaskWallet: React.FC = () => {
 
           window.ethereum.on('accountsChanged', (accounts: string[]) => {
             setAccount(accounts[0]);
-            checkRegistration(accounts[0]);
+            if (accounts[0]) {
+              checkRegistration(accounts[0]);
+            }
           });
 
           window.ethereum.on('disconnect', () => {
@@ -47,7 +57,9 @@ const MetaMaskWallet: React.FC = () => {
       }
     };
 
-    loadWeb3();
+    if (roleParam) {
+      loadWeb3();
+    }
 
     return () => {
       if (window.ethereum && window.ethereum.removeListener) {
@@ -55,7 +67,7 @@ const MetaMaskWallet: React.FC = () => {
         window.ethereum.removeListener('disconnect', setAccount);
       }
     };
-  }, []);
+  }, [searchParams]);
 
   const checkRegistration = async (wallet: string) => {
     try {
@@ -76,7 +88,9 @@ const MetaMaskWallet: React.FC = () => {
   return (
     <div>
       <h2>MetaMask Wallet</h2>
-      {account ? (
+      {errorMessage ? (
+        <p>{errorMessage}</p>
+      ) : account ? (
         <div>
           <p>Connected Account: {account}</p>
           {isRegistered === null && <p>Verifying registration status...</p>}
@@ -88,4 +102,4 @@ const MetaMaskWallet: React.FC = () => {
   );
 };
 
-export default MetaMaskWallet;
+export default Connect;
