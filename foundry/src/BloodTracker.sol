@@ -2,8 +2,9 @@
 pragma solidity ^0.8.18;
 
 import {Blood} from "./Blood.sol";
+import {Marketplace} from "./Marketplace.sol";
 
-contract BloodTracker {
+contract BloodTracker is Marketplace {
     error BloodTracker__NotOwner();
     error BloodTracker__IncorrectRole(Role required, Role yourRole);
 
@@ -68,7 +69,11 @@ contract BloodTracker {
     }
 
     modifier onlyRole(Role role) {
-        if (companies[msg.sender].role != role) revert BloodTracker__IncorrectRole(role, companies[msg.sender].role);
+        if (companies[msg.sender].role != role)
+            revert BloodTracker__IncorrectRole(
+                role,
+                companies[msg.sender].role
+            );
         _;
     }
 
@@ -77,20 +82,31 @@ contract BloodTracker {
     }
 
     // Función para registrar empresas
-    function signUp(string memory _name, string memory _location, Role _role) external {
-        require(bytes(companies[msg.sender].name).length == 0, "Already registered");
+    function signUp(
+        string memory _name,
+        string memory _location,
+        Role _role
+    ) external {
+        require(
+            bytes(companies[msg.sender].name).length == 0,
+            "Already registered"
+        );
         companies[msg.sender] = Company(_name, _location, _role);
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
-    function donate(address _from, address _to) external payable returns (uint256) {
-        require(companies[msg.sender].role == Role.DONATION_CENTER, "Not donation center");
-        // Obtenemos nuevo Id de token
-        uint256 tokenId = nextTokenId++;
+    function donate(
+        address _from,
+        address _to
+    ) external payable returns (uint256) {
+        require(
+            companies[msg.sender].role == Role.DONATION_CENTER,
+            "Not donation center"
+        );
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
-        bld.mint(_to, tokenId);
+        uint256 tokenId = bld.mint(_to);
         // Guardamos los datos del token
         products[tokenId] = Product(0, Derivative.RAW);
 
@@ -112,9 +128,19 @@ contract BloodTracker {
     // }
 
     // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
-    function process(uint256 _tokenId) external tokenOwner(_tokenId) onlyRole(Role.LABORATORY) returns (uint256, uint256, uint256) {
+    function process(
+        uint256 _tokenId
+    )
+        external
+        tokenOwner(_tokenId)
+        onlyRole(Role.LABORATORY)
+        returns (uint256, uint256, uint256)
+    {
         uint256 idPlasma = createDerivative(_tokenId, Derivative.PLASMA);
-        uint256 idErythrocyte = createDerivative(_tokenId, Derivative.ERYTHROCYTES);
+        uint256 idErythrocyte = createDerivative(
+            _tokenId,
+            Derivative.ERYTHROCYTES
+        );
         uint256 idPlatelet = createDerivative(_tokenId, Derivative.PLATELETS);
 
         bld.burn(_tokenId);
@@ -123,15 +149,19 @@ contract BloodTracker {
     }
 
     // Función para que los traders puedan consumir la sangre
-    function consume(uint256 _tokenId) external tokenOwner(_tokenId) onlyRole(Role.TRADER) {
+    function consume(
+        uint256 _tokenId
+    ) external tokenOwner(_tokenId) onlyRole(Role.TRADER) {
         bld.burn(_tokenId);
     }
 
     // Función para generar hemoderivados
-    function createDerivative(uint256 _tokenIdOrigen, Derivative _derivative) private returns (uint256) {
-        uint256 tokenId = nextTokenId++;
+    function createDerivative(
+        uint256 _tokenIdOrigen,
+        Derivative _derivative
+    ) private returns (uint256) {
+        uint256 tokenId = bld.mint(msg.sender);
         products[tokenId] = Product(_tokenIdOrigen, _derivative);
-        bld.mint(msg.sender, tokenId);
         return tokenId;
     }
 }

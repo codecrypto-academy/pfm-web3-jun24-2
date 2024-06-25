@@ -4,7 +4,7 @@ test = "foundry/test"
 out = "foundry/out"
 cache_path = "foundry/cache"
 libs = ["foundry/lib"]
-solc = "0.8.18"
+solc = "0.8.20"
 
 [fmt]
 single_line_statement_blocks = "single"
