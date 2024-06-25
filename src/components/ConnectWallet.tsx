@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { saludar } from "../data";
+import { getDonations } from "@/lib/events";
 
 export default function () {
-  return <button onClick={() => saludar()}>Soy un boton</button>;
+  return <button onClick={() => getDonations('')}>Soy un boton</button>;
 }
