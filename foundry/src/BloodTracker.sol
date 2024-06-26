@@ -11,6 +11,7 @@ contract BloodTracker is Marketplace {
     Blood bld;
 
     enum Role {
+        IDLE,
         DONATION_CENTER,
         LABORATORY,
         TRADER
@@ -96,17 +97,12 @@ contract BloodTracker is Marketplace {
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
     function donate(
-        address _from,
-        address _to
-    ) external payable returns (uint256) {
-        require(
-            companies[msg.sender].role == Role.DONATION_CENTER,
-            "Not donation center"
-        );
+        address _from
+    ) external payable onlyRole(Role.DONATION_CENTER) returns (uint256) {
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
-        uint256 tokenId = bld.mint(_to);
+        uint256 tokenId = bld.mint(msg.sender);
         // Guardamos los datos del token
         products[tokenId] = Product(0, Derivative.RAW);
 
@@ -163,5 +159,25 @@ contract BloodTracker is Marketplace {
         uint256 tokenId = bld.mint(msg.sender);
         products[tokenId] = Product(_tokenIdOrigen, _derivative);
         return tokenId;
+    }
+
+    ///////////////////////////
+    ////////Marketplace////////
+    ///////////////////////////
+
+    // Functions override to apply roles to it
+    function listItem(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 price
+    ) public override onlyRole(Role.LABORATORY) {
+        super.listItem(nftAddress, tokenId, price);
+    }
+
+    function buyItem(
+        address nftAddress,
+        uint256 tokenId // isNotOwner(nftAddress, tokenId, msg.sender)
+    ) public payable override onlyRole(Role.TRADER) {
+        super.buyItem(nftAddress, tokenId);
     }
 }
