@@ -89,4 +89,24 @@ contract BloodTracker is IBlood, Marketplace {
 
         bld.burn(_tokenId);
     }
+
+    ///////////////////////////
+    ////////Marketplace////////
+    ///////////////////////////
+
+    // Functions override to apply roles to it
+    function listItem(
+        address nftAddress,
+        uint256 tokenId,
+        uint256 price
+    ) public override onlyRole(Role.LABORATORY) {
+        super.listItem(nftAddress, tokenId, price);
+    }
+
+    function buyItem(
+        address nftAddress,
+        uint256 tokenId // isNotOwner(nftAddress, tokenId, msg.sender)
+    ) public payable override onlyRole(Role.TRADER) {
+        super.buyItem(nftAddress, tokenId);
+    }
 }
