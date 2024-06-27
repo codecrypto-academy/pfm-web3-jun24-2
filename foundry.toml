@@ -2,6 +2,7 @@
 src = "foundry/src"
 test = "foundry/test"
 out = "foundry/out"
+script = "foundry/script"
 cache_path = "foundry/cache"
 libs = ["foundry/lib"]
 solc = "0.8.20"

@@ -3,15 +3,18 @@ pragma solidity ^0.8.18;
 
 import {Script, console} from "forge-std/Script.sol";
 import {BloodTracker} from "../src/BloodTracker.sol";
-import {Blood} from "../src/Blood.sol";
+import {BloodDonation} from "../src/BloodDonation.sol";
+import {BloodDerivative} from "../src/BloodDerivative.sol";
 
 contract DeployBlood is Script {
-    function run() external returns (BloodTracker, Blood) {
+    function run() external returns (BloodTracker, BloodDonation, BloodDerivative) {
         vm.startBroadcast();
-        Blood bld = new Blood();
-        BloodTracker bldTracker = new BloodTracker(address(bld));
+        BloodDonation bld = new BloodDonation();
+        BloodDerivative der = new BloodDerivative();
+        BloodTracker bldTracker = new BloodTracker(address(bld), address(der));
         bld.transferOwnership(address(bldTracker));
+        der.transferOwnership(address(bldTracker));
         vm.stopBroadcast();
-        return (bldTracker, bld);
+        return (bldTracker, bld, der);
     }
 }
