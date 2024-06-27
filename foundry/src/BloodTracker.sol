@@ -60,13 +60,15 @@ contract BloodTracker is IBlood, Marketplace {
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
-    function donate(address _from) external payable onlyRole(Role.DONATION_CENTER) {
+    function donate(address _from) external payable onlyRole(Role.DONATION_CENTER) returns(uint256) {
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
         uint256 tokenId = bld.mint(msg.sender);
 
         emit Donation(_from, tokenId);
+
+        return tokenId;
     }
 
     // Función para analisar la sangre -- PENDIENTE DE MOMENTO
