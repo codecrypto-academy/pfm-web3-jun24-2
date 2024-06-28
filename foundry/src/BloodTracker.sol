@@ -60,7 +60,7 @@ contract BloodTracker is IBlood, Marketplace {
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
-    function donate(address _from) external payable onlyRole(Role.DONATION_CENTER) returns(uint256) {
+    function donate(address _from) external payable onlyRole(Role.DONATION_CENTER) returns (uint256) {
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
@@ -84,12 +84,14 @@ contract BloodTracker is IBlood, Marketplace {
     // }
 
     // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
-    function process(uint256 _tokenId) external tokenOwnerBld(_tokenId) onlyRole(Role.LABORATORY) {
-        der.mint(msg.sender, _tokenId, Derivative.PLASMA);
-        der.mint(msg.sender, _tokenId, Derivative.ERYTHROCYTES);
-        der.mint(msg.sender, _tokenId, Derivative.PLATELETS);
+    function process(uint256 _tokenId) external tokenOwnerBld(_tokenId) onlyRole(Role.LABORATORY) returns (uint256, uint256, uint256) {
+        uint256 tokenIdPlasma = der.mint(msg.sender, _tokenId, Derivative.PLASMA);
+        uint256 tokenIdErythrocytes = der.mint(msg.sender, _tokenId, Derivative.ERYTHROCYTES);
+        uint256 tokenIdPlatelets = der.mint(msg.sender, _tokenId, Derivative.PLATELETS);
 
-        bld.burn(_tokenId);
+        // bld.burn(_tokenId);
+
+        return (tokenIdPlasma, tokenIdErythrocytes, tokenIdPlatelets);
     }
 
     ///////////////////////////
@@ -97,11 +99,9 @@ contract BloodTracker is IBlood, Marketplace {
     ///////////////////////////
 
     // Functions override to apply roles to it
-    function listItem(
-        address nftAddress,
-        uint256 tokenId,
-        uint256 price
-    ) public override onlyRole(Role.LABORATORY) {
+    function listItem(address nftAddress, uint256 tokenId, uint256 price) public override {
+        Role role = companies[msg.sender].role;
+        if (role != Role.LABORATORY && role != Role.TRADER) revert BloodTracker__IncorrectRole(role, companies[msg.sender].role);
         super.listItem(nftAddress, tokenId, price);
     }
 

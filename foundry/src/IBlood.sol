@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 interface IBlood {
-
     // Tipos de hemoderivados
     enum Derivative {
         PLASMA,

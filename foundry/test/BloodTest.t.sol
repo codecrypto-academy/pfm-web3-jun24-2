@@ -7,6 +7,8 @@ import {BloodDonation} from "../src/BloodDonation.sol";
 import {BloodDerivative} from "../src/BloodDerivative.sol";
 import {BloodTracker} from "../src/BloodTracker.sol";
 
+import {Marketplace} from "../src/Marketplace.sol";
+
 contract BloodTest is Test {
     BloodDonation bld;
     BloodDerivative der;
@@ -21,11 +23,7 @@ contract BloodTest is Test {
         DeployBlood deploy = new DeployBlood();
         (bldTracker, bld, der) = deploy.run();
         vm.prank(DONATION_CENTER);
-        bldTracker.signUp(
-            "donationCenter",
-            "Madrid",
-            BloodTracker.Role.DONATION_CENTER
-        );
+        bldTracker.signUp("donationCenter", "Madrid", BloodTracker.Role.DONATION_CENTER);
         vm.prank(LABORATORY);
         bldTracker.signUp("laboratory", "Madrid", BloodTracker.Role.LABORATORY);
         vm.prank(TRADER);
@@ -42,14 +40,25 @@ contract BloodTest is Test {
         assert(DONATION_CENTER == bld.ownerOf(tokenId));
     }
 
+    function testCreateDerivative() public returns (uint256, uint256, uint256) {
+        uint256 tokenId = testDonateFunction();
+        vm.prank(DONATION_CENTER);
+        bld.transferFrom(DONATION_CENTER, LABORATORY, tokenId);
+        vm.startPrank(LABORATORY);
+        bld.approve(address(bldTracker), tokenId);
+        (uint256 tokenIdPlasma, uint256 tokenIdErythrocytes, uint256 tokenIdPlatelets) = bldTracker.process(tokenId);
+        assert(der.ownerOf(tokenIdPlasma) == LABORATORY);
+        assert(der.ownerOf(tokenIdErythrocytes) == LABORATORY);
+        assert(der.ownerOf(tokenIdPlatelets) == LABORATORY);
+        return (tokenIdPlasma, tokenIdErythrocytes, tokenIdPlatelets);
+    }
+
     function testFailDonateFunction() public {
         bldTracker.donate(DONATION_CENTER);
     }
 
-    function testListItemMarketplace() public returns (uint256 tokenId) {
-        uint256[] memory beforeTokenOnSale = bldTracker.getTokensOnSale(
-            address(bld)
-        );
+    function testListItemMarketplaceLabRole() public returns (uint256 tokenId) {
+        uint256[] memory beforeTokenOnSale = bldTracker.getTokensOnSale(address(bld));
         tokenId = testDonateFunction();
         vm.startPrank(DONATION_CENTER);
         bld.approve(address(this), tokenId);
@@ -60,17 +69,30 @@ contract BloodTest is Test {
         bldTracker.listItem(address(bld), tokenId, 0.1 ether);
         vm.stopPrank();
 
-        uint256[] memory afterTokensOnSale = bldTracker.getTokensOnSale(
-            address(bld)
-        );
+        uint256[] memory afterTokensOnSale = bldTracker.getTokensOnSale(address(bld));
+
+        assert(beforeTokenOnSale.length < afterTokensOnSale.length);
+    }
+
+    function testListItemMarketplaceTraderRole() public returns (uint256 tokenId) {
+        uint256[] memory beforeTokenOnSale = bldTracker.getTokensOnSale(address(bld));
+        tokenId = testDonateFunction();
+        vm.startPrank(DONATION_CENTER);
+        bld.approve(address(this), tokenId);
+        bld.transferFrom(DONATION_CENTER, TRADER, tokenId);
+        vm.stopPrank();
+        vm.startPrank(TRADER);
+        bld.approve(address(bldTracker), tokenId);
+        bldTracker.listItem(address(bld), tokenId, 0.1 ether);
+        vm.stopPrank();
+
+        uint256[] memory afterTokensOnSale = bldTracker.getTokensOnSale(address(bld));
 
         assert(beforeTokenOnSale.length < afterTokensOnSale.length);
     }
 
     function testFailListItemMarketplace() public {
-        uint256[] memory beforeTokenOnSale = bldTracker.getTokensOnSale(
-            address(bld)
-        );
+        uint256[] memory beforeTokenOnSale = bldTracker.getTokensOnSale(address(bld));
         uint256 tokenId = testDonateFunction();
         vm.startPrank(DONATION_CENTER);
         bld.approve(address(this), tokenId);
@@ -81,9 +103,7 @@ contract BloodTest is Test {
         bldTracker.listItem(address(bld), tokenId, 0.1 ether);
         vm.stopPrank();
 
-        uint256[] memory afterTokensOnSale = bldTracker.getTokensOnSale(
-            address(bld)
-        );
+        uint256[] memory afterTokensOnSale = bldTracker.getTokensOnSale(address(bld));
 
         assert(beforeTokenOnSale.length < afterTokensOnSale.length);
     }
@@ -94,12 +114,35 @@ contract BloodTest is Test {
     // }
 
     function testBuyItemMarketplaceWithoutTraderRole() external {
-        uint256 tokenId = testListItemMarketplace();
+        uint256 tokenId = testListItemMarketplaceLabRole();
         uint256 beforeBalance = bld.balanceOf(TRADER);
+        Marketplace.Listing memory listedItem = bldTracker.getListing(address(bld), tokenId);
+        address seller = listedItem.seller;
+        uint256 beforeBuySellerBalance = address(seller).balance;
         hoax(TRADER);
         bldTracker.buyItem{value: 0.1 ether}(address(bld), tokenId);
+        uint256 afterBuySellerBalance = address(seller).balance;
         uint256 afterBalance = bld.balanceOf(TRADER);
         assert(beforeBalance < afterBalance);
         assert(bld.balanceOf(address(bldTracker)) == 0);
+        console.log("balance of laboratory", LABORATORY.balance);
+        assert(beforeBuySellerBalance < afterBuySellerBalance);
+    }
+
+    function testCancelListingFunction() public {
+        uint256 tokenId = testListItemMarketplaceTraderRole();
+        assert(bld.ownerOf(tokenId) == address(bldTracker));
+        vm.prank(TRADER);
+        bldTracker.cancelListing(address(bld), tokenId);
+        assert(bld.ownerOf(tokenId) == TRADER);
+    }
+
+    function testUpdateListingFunction() public {
+        uint256 newPrice = 1000 ether;
+        uint256 tokenId = testListItemMarketplaceTraderRole();
+        vm.prank(TRADER);
+        bldTracker.updateListing(address(bld), tokenId, newPrice);
+        Marketplace.Listing memory listedItem = bldTracker.getListing(address(bld), tokenId);
+        assert(listedItem.price == newPrice);
     }
 }

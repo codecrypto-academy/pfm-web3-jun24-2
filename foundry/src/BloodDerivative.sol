@@ -17,7 +17,7 @@ contract BloodDerivative is IBlood, ERC721, ERC721Burnable, ERC721Enumerable, Ow
     }
 
     mapping(uint256 tokenId => Product) public products;
-    
+
     constructor()
         // address initialOwner
         ERC721("Derivative", "DERIV")
