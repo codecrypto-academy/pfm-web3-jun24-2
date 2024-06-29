@@ -25,9 +25,8 @@ contract BloodDerivative is IBlood, ERC721, ERC721Burnable, ERC721Enumerable, Ow
     {}
 
     function mint(address to, uint256 fromTokenId, Derivative _derivative) external onlyOwner returns (uint256 tokenId) {
-        tokenId = nextTokenId;
+        tokenId = ++nextTokenId;
         super._safeMint(to, tokenId);
-        nextTokenId++;
         // Guardamos los datos del token
         products[tokenId] = Product(fromTokenId, _derivative);
     }

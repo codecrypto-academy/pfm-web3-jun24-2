@@ -11,6 +11,14 @@ import {IBlood} from "./IBlood.sol";
 contract BloodDonation is ERC721, ERC721Burnable, ERC721Enumerable, Ownable {
     uint256 private nextTokenId;
 
+    struct Donation {
+        uint256 plasmaId;
+        uint256 erythrocytesId;
+        uint256 plateletsId;
+    }
+
+    mapping(uint256 tokenId => Donation) public donations;
+
     constructor()
         // address initialOwner
         ERC721("Blood", "BLOOD")
@@ -18,9 +26,12 @@ contract BloodDonation is ERC721, ERC721Burnable, ERC721Enumerable, Ownable {
     {}
 
     function mint(address to) external onlyOwner returns (uint256 tokenId) {
-        tokenId = nextTokenId;
+        tokenId = ++nextTokenId;
         super._safeMint(to, tokenId);
-        nextTokenId++;
+    }
+
+    function updateDonation(uint256 _tokenId, uint256 _plasmaId, uint256 _erythrocytesId, uint256 _plateletsId) external onlyOwner {
+        donations[_tokenId] = Donation(_plasmaId, _erythrocytesId, _plateletsId);
     }
 
     function _increaseBalance(address account, uint128 amount) internal virtual override(ERC721, ERC721Enumerable) {

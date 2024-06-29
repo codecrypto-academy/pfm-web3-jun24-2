@@ -37,7 +37,7 @@ contract BloodTracker is IBlood, Marketplace {
 
     mapping(address companyWallet => Company) public companies;
 
-    event Donation(address indexed donor, uint256 indexed tokenId);
+    event Donation(address indexed donor, address indexed center, uint256 indexed tokenId, uint256 value);
 
     modifier tokenOwnerBld(uint256 tokenId) {
         if (bld.ownerOf(tokenId) != msg.sender) revert BloodTracker__NotOwner();
@@ -66,7 +66,7 @@ contract BloodTracker is IBlood, Marketplace {
         // Creamos el token que representa la unidad de sangre
         uint256 tokenId = bld.mint(msg.sender);
 
-        emit Donation(_from, tokenId);
+        emit Donation(_from, msg.sender, tokenId, msg.value);
 
         return tokenId;
     }
@@ -85,11 +85,13 @@ contract BloodTracker is IBlood, Marketplace {
 
     // Función para que los laboratorios puedan procesar las unidades de sangre en hemoderivados
     function process(uint256 _tokenId) external tokenOwnerBld(_tokenId) onlyRole(Role.LABORATORY) {
-        der.mint(msg.sender, _tokenId, Derivative.PLASMA);
-        der.mint(msg.sender, _tokenId, Derivative.ERYTHROCYTES);
-        der.mint(msg.sender, _tokenId, Derivative.PLATELETS);
+        uint256 plasmaId = der.mint(msg.sender, _tokenId, Derivative.PLASMA);
+        uint256 erythrocytesId = der.mint(msg.sender, _tokenId, Derivative.ERYTHROCYTES);
+        uint256 plateletsId = der.mint(msg.sender, _tokenId, Derivative.PLATELETS);
 
         bld.burn(_tokenId);
+
+        bld.updateDonation(_tokenId, plasmaId, erythrocytesId, plateletsId);
     }
 
     ///////////////////////////
