@@ -3,6 +3,7 @@ import React from "react";
 import Logo from "./Logo";
 import "./../app/globals.css";
 import { AppContainer } from "../app/layout";
+import ConnectWalletButton from "@/components/ConnectWalletButton";
 
 const Header = () => (
   <div className="header">
@@ -59,9 +60,7 @@ const Header = () => (
               </Link>
             </div>
           </div>
-          <Link href="/connect_wallet" className="nav-link">
-            Connect Wallet
-          </Link>
+          <ConnectWalletButton />
         </div>
       </div>
     </AppContainer>
