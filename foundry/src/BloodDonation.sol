@@ -31,6 +31,7 @@ contract BloodDonation is ERC721, ERC721Burnable, ERC721Enumerable, Ownable {
 
     function updateDonation(uint256 _tokenId, uint256 _plasmaId, uint256 _erythrocytesId, uint256 _plateletsId) external onlyOwner {
         donations[_tokenId] = Donation(_plasmaId, _erythrocytesId, _plateletsId);
+        super._burn(_tokenId);
     }
 
     function _increaseBalance(address account, uint128 amount) internal virtual override(ERC721, ERC721Enumerable) {
