@@ -103,15 +103,6 @@ export const abi = [
   },
   {
     "type": "function",
-    "name": "getProceeds",
-    "inputs": [
-      { "name": "seller", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "getTokensOnSale",
     "inputs": [
       { "name": "tokenAddress", "type": "address", "internalType": "address" }
@@ -138,7 +129,11 @@ export const abi = [
     "inputs": [
       { "name": "_tokenId", "type": "uint256", "internalType": "uint256" }
     ],
-    "outputs": [],
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
     "stateMutability": "nonpayable"
   },
   {
@@ -164,13 +159,6 @@ export const abi = [
       { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
       { "name": "newPrice", "type": "uint256", "internalType": "uint256" }
     ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "withdrawProceeds",
-    "inputs": [],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -317,7 +305,6 @@ export const abi = [
     ]
   },
   { "type": "error", "name": "BloodTracker__NotOwner", "inputs": [] },
-  { "type": "error", "name": "NoProceeds", "inputs": [] },
   { "type": "error", "name": "NotApprovedForMarketplace", "inputs": [] },
   {
     "type": "error",

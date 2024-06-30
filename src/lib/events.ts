@@ -1,9 +1,10 @@
 'use server'
 
-import { EventLog, Web3 } from "web3"
+import { Web3 } from "web3"
 import { abi as abiTracker } from "./contracts/BloodTracker"
 import { abi as abiDonation } from "./contracts/BloodDonation"
 import { abi as abiDerivative } from "./contracts/BloodDerivative"
+import { Address, DonationEventLog, EventType, TransferEventLog } from "./types"
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -13,17 +14,6 @@ const contractTracker = new web3.eth.Contract(abiTracker, process.env.BLD_TRACKE
 const contractDonation = new web3.eth.Contract(abiDonation, process.env.BLD_DONATION_CONTRACT_ADDRESS)
 const contractDerivative = new web3.eth.Contract(abiDerivative, process.env.BLD_DERIVATIVE_CONTRACT_ADDRESS)
 
-enum EventType {
-    Generation,
-    Transfer,
-    Consummation
-}
-
-const Derivative = {
-    Plasma: 0n,
-    Erythrocytes: 1n,
-    Platelets: 2n,
-} as const
 
 /**
  * Recupera el listado de las donaciones realizadas por un donante
@@ -36,7 +26,7 @@ export async function getDonations(address: string) {
         filter: { donor: address },
         fromBlock: process.env.DEPLOYMENT_BLOCK,
         toBlock: 'latest'
-    }) as EventLog[]
+    }) as DonationEventLog[]
 
     for (const event of events){
         //consulta tracker para obtener nombre y localización del centro
@@ -66,7 +56,7 @@ export async function getExtractions(address: string) {
         filter: { center: address },
         fromBlock: process.env.DEPLOYMENT_BLOCK,
         toBlock: 'latest'
-    }) as EventLog[]
+    }) as DonationEventLog[]
 
     for (const event of events){
         //consulta bloque para obtener la hora
@@ -99,14 +89,14 @@ export async function getProcesses(address: string) {
  * @param tokenId Id del token que se desea la traza. Puede ser de una donación o un derivado
  * @returns Traza completa del evento Transfer
  */
-export async function getTraceFromDonation(tokenId: number){
+export async function getEventsFromDonation(tokenId: number){
     const events = await contractDonation.getPastEvents('Transfer', {
         filter: { tokenId: tokenId },
         fromBlock: process.env.DEPLOYMENT_BLOCK,
         toBlock: 'latest'
-    }) as EventLog[]
+    }) as TransferEventLog[]
 
-    return formatTrace(events)
+    return formatEvent(events)
 }
 
 /**
@@ -114,35 +104,35 @@ export async function getTraceFromDonation(tokenId: number){
  * @param tokenId Id del token que se desea la traza. Puede ser de una donación o un derivado
  * @returns Traza completa del evento Transfer
  */
-export async function getTraceFromDerivative(tokenId: number, fromBlock: number){
+export async function getEventsFromDerivative(tokenId: number, fromBlock: number){
     const events = await contractDerivative.getPastEvents('Transfer', {
         filter: { tokenId: tokenId },
         fromBlock: fromBlock,
         toBlock: 'latest'
-    }) as EventLog[]
+    }) as TransferEventLog[]
 
-    return formatTrace(events)
+    return formatEvent(events)
 }
 
 /**
  * Recupera la trazabilidad completa de una donación a partir de la donación
  * @param tokenId Id de la donación original
  */
-export async function getFullTraceFromDonation(tokenId: number) {
-    const donationTrace = await getTraceFromDonation(tokenId)
+export async function getTraceFromDonation(tokenId: number) {
+    const donationTrace = await getEventsFromDonation(tokenId)
 
     // Si no encuentra eventos entonces es que la donación no existe 
-    if (!donationTrace.length) return
-
-    // Número del bloque en el que se hizo el procesamiento
-    const processBlock = donationTrace.find(t => {
-         return t.event === EventType.Consummation
-    }) 
+    if (!donationTrace.length) return {donationTrace: undefined}
 
     const donation = {
         tokenId: tokenId,
         trace: donationTrace
     }
+
+    // Número del bloque en el que se hizo el procesamiento
+    const processBlock = donationTrace.find(t => {
+         return t.event === EventType.Consummation
+    }) 
 
     // Si no hay bloque de procesamiento, salimos
     if (!processBlock) return {donationTrace: donation}
@@ -150,51 +140,38 @@ export async function getFullTraceFromDonation(tokenId: number) {
     // Consultamos los Ids de los derivados
     const { plasmaId, erythrocytesId, plateletsId } = await contractDonation.methods.donations(tokenId).call()
 
-    const plasmaTrace = await getTraceFromDerivative(plasmaId as number, Number(processBlock.blockNumber))
-    const erythrocytesTrace = await getTraceFromDerivative(erythrocytesId as number, Number(processBlock.blockNumber))
-    const plateletsTrace = await getTraceFromDerivative(plateletsId as number, Number(processBlock.blockNumber))
+    const plasmaTrace = await getEventsFromDerivative(plasmaId as number, Number(processBlock.blockNumber))
+    const erythrocytesTrace = await getEventsFromDerivative(erythrocytesId as number, Number(processBlock.blockNumber))
+    const plateletsTrace = await getEventsFromDerivative(plateletsId as number, Number(processBlock.blockNumber))
 
     return {
         donationTrace: donation,
         plasmaTrace: {
-            tokenId: plasmaId,
+            tokenId: Number(plasmaId),
             trace: plasmaTrace
         },
         erythrocytesTrace: {
-            tokenId: erythrocytesId,
+            tokenId: Number(erythrocytesId),
             trace: erythrocytesTrace
         },
         plateletsTrace: {
-            tokenId: plateletsId,
+            tokenId: Number(plateletsId),
             trace: plateletsTrace
         }
     }
 }
 
-
-export async function getFullTraceFromDerivative(tokenId: number) {
-    // const { tokenIdOrigin } = await contractDerivative.methods.products(4).call()
-    
-    // if (!tokenIdOrigin) return console.log(404)
-
-    // const donaciones = await getFullTraceFromDonation(tokenIdOrigin as number)
-
-
-    
-    // const donaciones = await getFullTraceFromDonation(5)
-    // console.log(JSON.stringify(
-    //     donaciones, 
-    //     (key, value) => typeof value === 'bigint' ? value.toString() : value,
-    //     4
-    // ))
+export async function getTokenIdOriginFromDerivative(tokenId: number) {
+    const { tokenIdOrigin } = await contractDerivative.methods.products(tokenId).call()
+    if (!tokenIdOrigin) return
+    return await getTraceFromDonation(tokenIdOrigin as number)
 }
 
 
-
-function formatTrace(events: EventLog[]){
+function formatEvent(events: TransferEventLog[]){
     return events.map(e => {
-        const blockNumber = e.blockNumber
-        let event, owner
+        const blockNumber = Number(e.blockNumber)
+        let event, owner: Address
         if (e.returnValues.from === ZERO_ADDRESS){
             event = EventType.Generation
             owner = e.returnValues.to

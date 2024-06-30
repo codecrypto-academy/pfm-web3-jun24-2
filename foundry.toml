@@ -4,6 +4,7 @@ test = "foundry/test"
 out = "foundry/out"
 script = "foundry/script"
 cache_path = "foundry/cache"
+broadcast = "foundry/broadcast"
 libs = ["foundry/lib"]
 solc = "0.8.20"
 
