@@ -1,6 +1,6 @@
 import { AppContainer } from "../layout";
 import BuildingUp from "@/components/BuildingUp";
-import MetaMaskWallet from "@/components/MetaMaskWallet";
+import ConnectWalletButton from "@/components/ConnectWalletButton";
 import "./../globals.css";
 
 export default function ConnectWalletPage() {
@@ -10,7 +10,7 @@ export default function ConnectWalletPage() {
         <div className="feature-buildingup-text">
           <h2>Connect Wallet</h2>
         </div>
-        <MetaMaskWallet />
+        <ConnectWalletButton />
         <BuildingUp />
       </div>
     </AppContainer>
