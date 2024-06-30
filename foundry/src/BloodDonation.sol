@@ -7,7 +7,6 @@ import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ER
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IBlood} from "./IBlood.sol";
 
-
 contract BloodDonation is ERC721, ERC721Burnable, ERC721Enumerable, Ownable {
     uint256 private nextTokenId;
 
