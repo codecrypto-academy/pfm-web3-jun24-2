@@ -3,7 +3,15 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./RoleHome.module.css";
 import { AppContainer } from "../app/layout";
-import GetWalletModal from "./GetWalletModal";
+import { useWallet } from "./ConnectWalletButton";
+import { Wallet } from "./ConnectWalletButton";
+import Register from "./Registro";
+import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
+import DonationCenter from "./Roles/DonationCenter";
+import Laboratory from "./Roles/Laboratory";
+import Trader from "./Roles/Trader";
+
+
 
 const roles = [
   { name: "Register", img: "/Blood_cell512px.png", path: "/role-registro" },
@@ -22,28 +30,46 @@ const roles = [
 ];
 
 const RolesGrid = () => {
-  const router = useRouter();
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [balance, setBalance] = useState<string | null>();
+  const [role, setRole] = useState<Number | null>(null);
+  const { account, web3 } = useWallet();
 
   useEffect(() => {
-    // Check if the wallet is connected
-    if (
-      typeof window.ethereum !== "undefined" &&
-      window.ethereum.selectedAddress
-    ) {
-      setIsWalletConnected(true);
-    }
-  }, []);
 
-  const handleClick = (path: string, role: string) => {
-    if (role !== "Register" && !isWalletConnected) {
-      // If wallet is not connected and the role is not "Register", redirect to GetWalletModal
-      router.push("/get-wallet");
-    } else {
-      // Otherwise, proceed to the role page
-      router.push(path);
+    const getRole = async () => {
+      if (web3) {
+        const contractTracker = new web3.eth.Contract(abiTracker, "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
+        const result = await contractTracker.methods.companies(account).call({ from: account });
+        if (result.role === 0) {
+          setRole(null)
+        }
+        setRole(Number(result.role));
+      }
     }
-  };
+
+    getRole();
+  }, [account]);
+
+  const getRoleComponent = (role) => {
+
+    switch (role) {
+      case 1:
+        return <DonationCenter />
+        break;
+      case 2:
+        return <Laboratory />
+        break;
+      case 3:
+        return <Trader />
+        break;
+      default:
+        return <></>
+        break;
+    }
+  }
+
+
+
 
   return (
     <AppContainer>
@@ -60,18 +86,14 @@ const RolesGrid = () => {
         </p>
       </div>
       <div className={styles.rolesGrid}>
-        {roles.map((role) => (
-          <div
-            key={role.name}
-            className={styles.roleBox}
-            onClick={() => handleClick(role.path, role.name)}>
-            <img src={role.img} alt={role.name} className={styles.roleImg} />
-            <div className={styles.roleName}>{role.name}</div>
-          </div>
-        ))}
+        <div>
+          {role ? getRoleComponent(role) : <Register />}
+        </div>
       </div>
     </AppContainer>
   );
 };
+
+
 
 export default RolesGrid;

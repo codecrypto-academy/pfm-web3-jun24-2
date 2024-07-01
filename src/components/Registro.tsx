@@ -4,46 +4,35 @@ import React, { useState, useEffect } from "react";
 import "./../app/globals.css";
 import styles from "./Registro.module.css";
 import GetWalletModal from "@/components/GetWalletModal";
+import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
+import { useWallet } from "./ConnectWalletButton";
+
 
 const roles = ["Donor", "Company"];
 const companyRoles = ["Collector Center", "Laboratory", "Trader"];
 
 const Register = () => {
+  const { account, web3 } = useWallet();
   const [role, setRole] = useState("");
   const [companyRole, setCompanyRole] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [location, setLocation] = useState("");
   const [registerSanitario, setRegisterSanitario] = useState("");
   const [bloodType, setBloodType] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>();
 
-  useEffect(() => {
-    if (
-      typeof window.ethereum !== "undefined" &&
-      window.ethereum.selectedAddress
-    ) {
-      setWalletAddress(window.ethereum.selectedAddress);
-      setIsWalletConnected(true);
-    } else {
-      setIsWalletConnected(false);
-    }
-  }, []);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    if (!isWalletConnected && role !== "Register") {
-      setShowWalletModal(true);
-      return;
-    }
 
     if (
       !walletAddress ||
       !role ||
       (role === "Company" &&
-        (!companyName || !registerSanitario || !companyRole)) ||
+        (!companyName || !registerSanitario || !companyRole || !location)) ||
       (role === "Donor" && !bloodType)
     ) {
       setErrorMessage("All fields are required");
@@ -60,6 +49,28 @@ const Register = () => {
     } else if (role === "Donor") {
       console.log("Blood Type:", bloodType);
     }
+    if (role === "Company") {
+      var roleNum
+      switch (companyRole) {
+        case "Collector Center":
+          roleNum = 1;
+          break;
+        case "Laboratory":
+          roleNum = 2;
+          break;
+        case "Trader":
+          roleNum = 3;
+          break;
+        default:
+          roleNum = 0;
+          break;
+      }
+      const contractTracker = new web3.eth.Contract(abiTracker, "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
+      const receipt = await contractTracker.methods.signUp(companyName, location, roleNum).send({ from: account });
+      setTxHash(receipt.transactionHash);
+      window.location.reload();
+    }
+
   };
 
   return (
@@ -111,6 +122,19 @@ const Register = () => {
                 id="companyName"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
+                className={styles.formInput}
+                required
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="location" className={styles.formLabel}>
+                Location
+              </label>
+              <input
+                type="text"
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 className={styles.formInput}
                 required
               />
@@ -173,6 +197,7 @@ const Register = () => {
       {showWalletModal && (
         <GetWalletModal onClose={() => setShowWalletModal(false)} />
       )}
+      {txHash ? <h1>The txHash is {txHash}</h1> : <></>}
     </section>
   );
 };
