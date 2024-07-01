@@ -1,16 +1,16 @@
 import React from "react";
 import { AppContainer } from "../layout";
-import Form from "./../../components/Form";
+import ConnectWalletButton from "./../../components/ConnectWalletButton";
 import "./../globals.css";
 
-const GetInTouchPage = () => {
+const ConnectWalletPage = () => {
   return (
     <AppContainer>
       <div>
-        <Form />
+        <ConnectWalletButton />;
       </div>
     </AppContainer>
   );
 };
 
-export default GetInTouchPage;
+export default ConnectWalletPage;

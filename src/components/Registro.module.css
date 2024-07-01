@@ -1,0 +1,56 @@
+.section {
+  /* border: solid 1px rgb(221, 255, 0); */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 80px 450px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.registerForm {
+  /* border: solid 1px rgb(221, 255, 0); */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formLabel {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.formInput,
+.formSelect {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submitButton {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #45a049;
+}
+
+.errorMessage {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+}
