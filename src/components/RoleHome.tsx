@@ -18,7 +18,7 @@ const roles = [
     img: "/Screening_donated_blood256px.png",
     path: "/role-laboratory",
   },
-  { name: "Trader", img: "/AB_blood_group512px.png", path: "/role-trader" },
+  { name: "Trader", img: "/AB_blood_group512px.png", path: "/role-traders" },
 ];
 
 const RolesGrid = () => {
