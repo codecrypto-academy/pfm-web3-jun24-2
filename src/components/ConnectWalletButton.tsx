@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Web3 from "web3";
 import "./../app/globals.css";
 import GetWalletModal from "@/components/GetWalletModal";
@@ -12,9 +13,10 @@ const ConnectWalletButton = () => {
   const [isGetWalletModalOpen, setIsGetWalletModalOpen] =
     useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-  const [roleDropdownOpen, setRoleDropdownOpen] = useState<boolean>(false);
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [walletType, setWalletType] = useState<string>("");
+
+  const router = useRouter();
 
   useEffect(() => {
     if (window.ethereum) {
@@ -49,6 +51,12 @@ const ConnectWalletButton = () => {
       setInstalled(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (account) {
+      router.push("/all-role-grid");
+    }
+  }, [account, router]);
 
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -92,7 +100,9 @@ const ConnectWalletButton = () => {
     switch (networkId) {
       case "1":
         return "Mainnet";
-      case "4":
+      case "11155111":
+        return "Sepolia";
+      case "5":
         return "Goerli";
       default:
         return "";
@@ -106,10 +116,6 @@ const ConnectWalletButton = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleCloseGetWalletModal = () => {
-    setIsGetWalletModalOpen(false);
   };
 
   const getWalletLogo = () => {
@@ -131,7 +137,7 @@ const ConnectWalletButton = () => {
               onClick={handleConnectWallet}>
               Connect Wallet
             </button>
-            {isModalOpen && <WalletModal onClose={handleCloseModal} />}
+            {isModalOpen && <GetWalletModal onClose={handleCloseModal} />}
           </>
         ) : (
           <div className="dropdown-wallet">
@@ -181,7 +187,7 @@ const ConnectWalletButton = () => {
             Connect Wallet
           </button>
           {isGetWalletModalOpen && (
-            <GetWalletModal onClose={handleCloseGetWalletModal} />
+            <GetWalletModal onClose={handleCloseModal} />
           )}
         </>
       )}
