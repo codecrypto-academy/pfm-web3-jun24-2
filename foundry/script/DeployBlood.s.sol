@@ -7,9 +7,12 @@ import {BloodDonation} from "../src/BloodDonation.sol";
 import {BloodDerivative} from "../src/BloodDerivative.sol";
 
 contract DeployBlood is Script {
-    function run() external returns (BloodTracker, BloodDonation, BloodDerivative) {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+    function run()
+        external
+        returns (BloodTracker, BloodDonation, BloodDerivative)
+    {
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast();
         BloodDonation bld = new BloodDonation();
         BloodDerivative der = new BloodDerivative();
         BloodTracker bldTracker = new BloodTracker(address(bld), address(der));

@@ -1,5 +1,26 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Probar front con smart contracts en foundry
+
+1. Iniciamos la red anvil para que sea accesible desde todas las ip's con este comando:
+```bash
+    anvil --host 0.0.0.0
+```
+2. Desplegamos los contratos en la red de anvil con make:
+
+```bash
+cd foundry
+make deploy-anvil
+```
+
+3. Desplegamos el front:
+
+```bash
+# root repo directory
+npm run dev
+```
+Podremos interactuar con el front, es recomendable conectar una wallet y probar a registrar direcciones.
+
 ## Getting Started
 
 First, run the development server:
