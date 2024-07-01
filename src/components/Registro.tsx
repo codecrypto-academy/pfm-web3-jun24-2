@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import "./../app/globals.css";
 import styles from "./Registro.module.css";
+import GetWalletModal from "@/components/GetWalletModal";
 
 const roles = ["Donor", "Company"];
 const companyRoles = ["Collector Center", "Laboratory", "Trader"];
@@ -15,6 +16,8 @@ const Register = () => {
   const [registerSanitario, setRegisterSanitario] = useState("");
   const [bloodType, setBloodType] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
 
   useEffect(() => {
     if (
@@ -22,11 +25,19 @@ const Register = () => {
       window.ethereum.selectedAddress
     ) {
       setWalletAddress(window.ethereum.selectedAddress);
+      setIsWalletConnected(true);
+    } else {
+      setIsWalletConnected(false);
     }
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!isWalletConnected && role !== "Register") {
+      setShowWalletModal(true);
+      return;
+    }
 
     if (
       !walletAddress ||
@@ -159,6 +170,9 @@ const Register = () => {
           Submit
         </button>
       </form>
+      {showWalletModal && (
+        <GetWalletModal onClose={() => setShowWalletModal(false)} />
+      )}
     </section>
   );
 };

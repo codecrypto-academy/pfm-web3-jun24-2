@@ -1,117 +1,77 @@
 "use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./RoleHome.module.css";
+import { AppContainer } from "../app/layout";
+import GetWalletModal from "./GetWalletModal";
 
-import React, { useState } from "react";
-import "./../app/globals.css";
-import styles from "./Registro.module.css";
+const roles = [
+  { name: "Register", img: "/Blood_cell512px.png", path: "/role-registro" },
+  { name: "Donor", img: "/donor_card512px.png", path: "/role-donor" },
+  {
+    name: "Collector Center",
+    img: "/Blood_Donation_2.png",
+    path: "/role-collector-center",
+  },
+  {
+    name: "Laboratory",
+    img: "/Screening_donated_blood256px.png",
+    path: "/role-laboratory",
+  },
+  { name: "Trader", img: "/AB_blood_group512px.png", path: "/role-trader" },
+];
 
-const roles = ["Donor", "Company"];
+const RolesGrid = () => {
+  const router = useRouter();
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
 
-const Register = () => {
-  const [role, setRole] = useState("");
-  const [walletAddress, setWalletAddress] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [registerSanitario, setRegisterSanitario] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  useEffect(() => {
+    // Check if the wallet is connected
     if (
-      !walletAddress ||
-      !role ||
-      (role === "Company" && (!companyName || !registerSanitario)) ||
-      (role === "Donor" && !bloodType)
+      typeof window.ethereum !== "undefined" &&
+      window.ethereum.selectedAddress
     ) {
-      setErrorMessage("All fields are required");
-      return;
+      setIsWalletConnected(true);
     }
+  }, []);
 
-    setErrorMessage("");
-    // Process form submission
-    console.log("Role:", role);
-    console.log("Wallet Address:", walletAddress);
-    if (role === "Company") {
-      console.log("Company Name:", companyName);
-      console.log("Registro Sanitario:", registerSanitario);
-    } else if (role === "Donor") {
-      console.log("Blood Type:", bloodType);
+  const handleClick = (path: string, role: string) => {
+    if (role !== "Register" && !isWalletConnected) {
+      // If wallet is not connected and the role is not "Register", redirect to GetWalletModal
+      router.push("/get-wallet");
+    } else {
+      // Otherwise, proceed to the role page
+      router.push(path);
     }
   };
 
   return (
-    <section>
-      <h2>Register</h2>
-      <p>You will have only one wallet per company.</p>
-      <form onSubmit={handleSubmit} className={styles.registerForm}>
-        <div className={styles.formGroup}>
-          <label htmlFor="role">Role</label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required>
-            <option value="" disabled>
-              Select a role
-            </option>
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="walletAddress">Wallet Address</label>
-          <input
-            type="text"
-            id="walletAddress"
-            value={walletAddress}
-            onChange={(e) => setWalletAddress(e.target.value)}
-            required
-          />
-        </div>
-        {role === "Company" && (
-          <>
-            <div className={styles.formGroup}>
-              <label htmlFor="companyName">Name of the Company</label>
-              <input
-                type="text"
-                id="companyName"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="registerSanitario">Register Sanitario</label>
-              <input
-                type="text"
-                id="registerSanitario"
-                value={registerSanitario}
-                onChange={(e) => setRegisterSanitario(e.target.value)}
-                required
-              />
-            </div>
-          </>
-        )}
-        {role === "Donor" && (
-          <div className={styles.formGroup}>
-            <label htmlFor="bloodType">Blood Type</label>
-            <input
-              type="text"
-              id="bloodType"
-              value={bloodType}
-              onChange={(e) => setBloodType(e.target.value)}
-              required
-            />
+    <AppContainer>
+      <div className={styles.headerSection}>
+        <h1>
+          Your trusted partner in{" "}
+          <span className="highlight-green ">tracing blood donation</span> with{" "}
+          <span className="highlight-green ">blockchain</span> solutions.
+        </h1>
+        <p>
+          Our platform leverages blockchain technology to ensure full
+          traceability of blood, connecting the entire value chain from the
+          donor to the recipient.
+        </p>
+      </div>
+      <div className={styles.rolesGrid}>
+        {roles.map((role) => (
+          <div
+            key={role.name}
+            className={styles.roleBox}
+            onClick={() => handleClick(role.path, role.name)}>
+            <img src={role.img} alt={role.name} className={styles.roleImg} />
+            <div className={styles.roleName}>{role.name}</div>
           </div>
-        )}
-        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-        <button type="submit">Submit</button>
-      </form>
-    </section>
+        ))}
+      </div>
+    </AppContainer>
   );
 };
 
-export default Register;
+export default RolesGrid;

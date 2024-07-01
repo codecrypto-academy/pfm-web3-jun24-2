@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -37,6 +38,10 @@ const Header = () => {
     } else {
       router.push(path);
     }
+  };
+
+  const handlePartnersClick = () => {
+    router.push("/all-role-grid");
   };
 
   return (
@@ -95,8 +100,8 @@ const Header = () => {
               </div>
             </div>
             <div className="nav-item dropdown">
-              <div className="nav-link">Partners</div>
-              <div className="dropdown-content">
+            <div className="nav-link" onClick={handlePartnersClick}>Partners</div>
+            <div className="dropdown-content">
                 {roles.map((role) => (
                   <div
                     key={role.name}
