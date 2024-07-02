@@ -10,6 +10,7 @@ import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
 import DonationCenter from "./Roles/DonationCenter";
 import Laboratory from "./Roles/Laboratory";
 import Trader from "./Roles/Trader";
+import { Spinner } from "./Spinner";
 
 
 
@@ -30,7 +31,6 @@ const roles = [
 ];
 
 const RolesGrid = () => {
-  const [balance, setBalance] = useState<string | null>();
   const [role, setRole] = useState<Number | null>(null);
   const { account, web3 } = useWallet();
 
@@ -40,15 +40,13 @@ const RolesGrid = () => {
       if (web3) {
         const contractTracker = new web3.eth.Contract(abiTracker, "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
         const result = await contractTracker.methods.companies(account).call({ from: account });
-        if (result.role === 0) {
-          setRole(null)
-        }
         setRole(Number(result.role));
+        console.log(Number(result.role));
       }
     }
 
     getRole();
-  }, [account]);
+  }, [account, web3]);
 
   const getRoleComponent = (role) => {
 
@@ -63,31 +61,29 @@ const RolesGrid = () => {
         return <Trader />
         break;
       default:
-        return <></>
+        return <Register />
         break;
     }
   }
 
-
-
-
   return (
     <AppContainer>
       <div className={styles.headerSection}>
-        <h1>
+        {role === 0 ? <><h1>
           Your trusted partner in{" "}
           <span className="highlight-green ">tracing blood donation</span> with{" "}
           <span className="highlight-green ">blockchain</span> solutions.
         </h1>
-        <p>
-          Our platform leverages blockchain technology to ensure full
-          traceability of blood, connecting the entire value chain from the
-          donor to the recipient.
-        </p>
+          <p>
+            Our platform leverages blockchain technology to ensure full
+            traceability of blood, connecting the entire value chain from the
+            donor to the recipient.
+          </p> </> : <></>}
+
       </div>
       <div className={styles.rolesGrid}>
         <div>
-          {role ? getRoleComponent(role) : <Register />}
+          {role != null ? getRoleComponent(role) : <Spinner />}
         </div>
       </div>
     </AppContainer>

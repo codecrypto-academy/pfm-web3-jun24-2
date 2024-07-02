@@ -92,7 +92,9 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (account) {
+    if (account === "") {
+      router.push("/");
+    } else if (account) {
       router.push("/all-role-grid");
     }
   }, [account, router]);
@@ -224,6 +226,10 @@ const WalletButton = () => {
 
   const router = useRouter();
 
+  const getToWalletRole = () => {
+    router.push("/all-role-grid");
+  }
+
   return (
     <div className="wallet-container">
       {installed ? (
@@ -240,6 +246,7 @@ const WalletButton = () => {
           <div className="dropdown-wallet">
             <button
               className="feature-connect-wallet"
+              onClick={getToWalletRole}
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}>
               <img
