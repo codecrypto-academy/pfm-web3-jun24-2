@@ -1,11 +1,50 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Web3 from "web3";
 import "./../app/globals.css";
 import GetWalletModal from "@/components/GetWalletModal";
 
-const ConnectWalletButton = () => {
+type WalletContextType = {
+  account: string | null;
+  setAccount: React.Dispatch<React.SetStateAction<string>>,
+  network: string | null;
+  setNetwork: React.Dispatch<React.SetStateAction<string>>,
+  installed: boolean | null;
+  setInstalled: React.Dispatch<React.SetStateAction<boolean>>,
+  isModalOpen: boolean | null;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  isGetWalletModalOpen: boolean | null;
+  setIsGetWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  dropdownOpen: boolean | null;
+  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  web3: Web3 | null;
+  setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>,
+  walletType: string | null;
+  setWalletType: React.Dispatch<React.SetStateAction<string>>,
+  handleConnectWallet: () => Promise<void>;
+  handleLogout: () => Promise<void>;
+  getNetworkName: (networkId: string) => string;
+  getWalletType: () => string;
+  handleCloseModal: () => void;
+  getWalletLogo: () => string;
+};
+
+const WalletContext = createContext<WalletContextType | undefined>(undefined);
+
+type WalletProviderProps = {
+  children: ReactNode;
+};
+
+export const useWallet = () => {
+  const context = useContext(WalletContext);
+  if (!context) {
+    throw new Error('useWallet must be used within a Wallet component');
+  }
+  return context;
+}
+
+export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   const [account, setAccount] = useState("");
   const [network, setNetwork] = useState("");
   const [installed, setInstalled] = useState(false);
@@ -52,11 +91,13 @@ const ConnectWalletButton = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (account) {
-  //     router.push("/all-role-grid");
-  //   }
-  // }, [account, router]);
+  useEffect(() => {
+    if (account === "") {
+      router.push("/");
+    } else if (account) {
+      router.push("/all-role-grid");
+    }
+  }, [account, router]);
 
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -127,6 +168,68 @@ const ConnectWalletButton = () => {
     }
   };
 
+  const contextValue: WalletContextType = {
+    account,
+    setAccount,
+    network,
+    setNetwork,
+    installed,
+    setInstalled,
+    isModalOpen,
+    setIsModalOpen,
+    isGetWalletModalOpen,
+    setIsGetWalletModalOpen,
+    dropdownOpen,
+    setDropdownOpen,
+    web3,
+    setWeb3,
+    walletType,
+    setWalletType,
+    handleConnectWallet,
+    handleLogout,
+    getNetworkName,
+    getWalletType,
+    handleCloseModal,
+    getWalletLogo
+  }
+
+  return (
+    <WalletContext.Provider value={contextValue}>
+      {children}
+    </WalletContext.Provider>
+  );
+};
+
+const WalletButton = () => {
+  const { account,
+    setAccount,
+    network,
+    setNetwork,
+    installed,
+    setInstalled,
+    isModalOpen,
+    setIsModalOpen,
+    isGetWalletModalOpen,
+    setIsGetWalletModalOpen,
+    dropdownOpen,
+    setDropdownOpen,
+    web3,
+    setWeb3,
+    walletType,
+    setWalletType,
+    handleConnectWallet,
+    handleLogout,
+    getNetworkName,
+    getWalletType,
+    handleCloseModal,
+    getWalletLogo } = useContext(WalletContext);
+
+  const router = useRouter();
+
+  const getToWalletRole = () => {
+    router.push("/all-role-grid");
+  }
+
   return (
     <div className="wallet-container">
       {installed ? (
@@ -143,6 +246,7 @@ const ConnectWalletButton = () => {
           <div className="dropdown-wallet">
             <button
               className="feature-connect-wallet"
+              onClick={getToWalletRole}
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}>
               <img
@@ -152,8 +256,8 @@ const ConnectWalletButton = () => {
               />
               {web3?.utils.isAddress(account)
                 ? `${account.substring(0, 6)} ... ${account.substring(
-                    account.length - 4
-                  )}`
+                  account.length - 4
+                )}`
                 : account}
               <div
                 className="menu-icon"
@@ -195,4 +299,11 @@ const ConnectWalletButton = () => {
   );
 };
 
+const ConnectWalletButton = () => {
+  return (
+    <Wallet>
+      <WalletButton></WalletButton>
+    </Wallet>
+  )
+}
 export default ConnectWalletButton;
