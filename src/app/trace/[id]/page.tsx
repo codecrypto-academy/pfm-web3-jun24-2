@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { TraceBranch } from "@/components/TraceBranch"
 import { Derivative } from "@/lib/types"
 
-export type FullTrace = Awaited<ReturnType<typeof getTraceFromDonation>>
+type FullTrace = Awaited<ReturnType<typeof getTraceFromDonation>>
 
 export default function ({params}: {params: {id: string}}){
     const tokenId = params.id

@@ -30,9 +30,23 @@ export enum EventType {
     Consummation = 'Consumation'
 }
 
-export const Derivative = {
-    Plasma: 0n,
-    Erythrocytes: 1n,
-    Platelets: 2n,
-    Blood: 3n
-} as const
+export interface EventTrace {
+    blockNumber: number
+    event: EventType
+    owner: Address
+    name: string
+    location: string
+    timestamp: Date
+}
+
+export interface ProductTrace {
+    tokenId: number
+    trace: EventTrace[]
+}
+
+export enum Derivative {
+    Plasma = 0,
+    Erythrocytes = 1,
+    Platelets = 2,
+    Blood = 3
+}

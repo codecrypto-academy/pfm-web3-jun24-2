@@ -52,11 +52,11 @@ const ConnectWalletButton = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (account) {
-      router.push("/all-role-grid");
-    }
-  }, [account, router]);
+  // useEffect(() => {
+  //   if (account) {
+  //     router.push("/all-role-grid");
+  //   }
+  // }, [account, router]);
 
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {

@@ -1,11 +1,10 @@
 
-import { Derivative } from "@/lib/types"
+import { Derivative, ProductTrace } from "@/lib/types"
 import { TraceCard } from "./TraceCard"
-import { FullTrace } from "@/app/trace/[id]/page"
 
 interface TraceBranchProps {
-    trace: NonNullable<FullTrace['donationTrace']>
-    product: (typeof Derivative)[keyof typeof Derivative]
+    trace: ProductTrace
+    product: Derivative
 }
 
 export function TraceBranch({trace, product}: TraceBranchProps){
@@ -13,11 +12,9 @@ export function TraceBranch({trace, product}: TraceBranchProps){
         {trace.trace.map((value, key) => {
             return <TraceCard
                 key={key}
-                event={value.event}
                 product={product}
                 tokenId={trace.tokenId}
-                owner={value.owner}
-                blockNumber={value.blockNumber}
+                trace={value}
             ></TraceCard>
         })}
     </div> 

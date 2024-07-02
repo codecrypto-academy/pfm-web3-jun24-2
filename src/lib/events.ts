@@ -1,19 +1,18 @@
-'use server'
+'use client'
 
 import { Web3 } from "web3"
 import { abi as abiTracker } from "./contracts/BloodTracker"
 import { abi as abiDonation } from "./contracts/BloodDonation"
 import { abi as abiDerivative } from "./contracts/BloodDerivative"
-import { Address, DonationEventLog, EventType, TransferEventLog } from "./types"
+import { Address, DonationEventLog, EventTrace, EventType, TransferEventLog } from "./types"
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const web3 = new Web3(process.env.NETWORK_RPC)
+const web3 = new Web3(window.ethereum)
 
-const contractTracker = new web3.eth.Contract(abiTracker, process.env.BLD_TRACKER_CONTRACT_ADDRESS)
-const contractDonation = new web3.eth.Contract(abiDonation, process.env.BLD_DONATION_CONTRACT_ADDRESS)
-const contractDerivative = new web3.eth.Contract(abiDerivative, process.env.BLD_DERIVATIVE_CONTRACT_ADDRESS)
-
+const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS)
+const contractDonation = new web3.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS)
+const contractDerivative = new web3.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS)
 
 /**
  * Recupera el listado de las donaciones realizadas por un donante
@@ -24,7 +23,7 @@ export async function getDonations(address: string) {
     const donations = []
     const events = await contractTracker.getPastEvents('Donation', {
         filter: { donor: address },
-        fromBlock: process.env.DEPLOYMENT_BLOCK,
+        fromBlock: process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK,
         toBlock: 'latest'
     }) as DonationEventLog[]
 
@@ -54,7 +53,7 @@ export async function getExtractions(address: string) {
     const donations = []
     const events = await contractTracker.getPastEvents('Donation', {
         filter: { center: address },
-        fromBlock: process.env.DEPLOYMENT_BLOCK,
+        fromBlock: process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK,
         toBlock: 'latest'
     }) as DonationEventLog[]
 
@@ -79,7 +78,7 @@ export async function getExtractions(address: string) {
 export async function getProcesses(address: string) {
     return await contractDonation.getPastEvents('Transfer', {
         filter: { from: address, to: ZERO_ADDRESS },
-        fromBlock: process.env.DEPLOYMENT_BLOCK,
+        fromBlock: process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK,
         toBlock: 'latest'
     })
 }
@@ -92,7 +91,7 @@ export async function getProcesses(address: string) {
 export async function getEventsFromDonation(tokenId: number){
     const events = await contractDonation.getPastEvents('Transfer', {
         filter: { tokenId: tokenId },
-        fromBlock: process.env.DEPLOYMENT_BLOCK,
+        fromBlock: process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK,
         toBlock: 'latest'
     }) as TransferEventLog[]
 
@@ -167,10 +166,8 @@ export async function getTokenIdOriginFromDerivative(tokenId: number) {
     return await getTraceFromDonation(tokenIdOrigin as number)
 }
 
-
-function formatEvent(events: TransferEventLog[]){
-    return events.map(e => {
-        const blockNumber = Number(e.blockNumber)
+async function formatEvent(events: TransferEventLog[]): Promise<EventTrace[]>{
+    return await Promise.all(events.map(async e => {
         let event, owner: Address
         if (e.returnValues.from === ZERO_ADDRESS){
             event = EventType.Generation
@@ -182,10 +179,16 @@ function formatEvent(events: TransferEventLog[]){
             event = EventType.Transfer
             owner = e.returnValues.to
         }
+        const blockNumber = Number(e.blockNumber)
+        const {timestamp} = await web3.eth.getBlock(e.blockHash)
+        const {name, location} = await contractTracker.methods.companies(owner).call()
         return {
             blockNumber: blockNumber,
             event: event,
-            owner: owner
+            owner: owner,
+            name: name,
+            location: location,
+            timestamp: new Date(Number(timestamp) * 1000)
         }
-    })
+    }))
 }

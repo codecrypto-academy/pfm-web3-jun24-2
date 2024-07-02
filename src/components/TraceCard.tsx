@@ -1,27 +1,42 @@
-import { EventType, Derivative, Address } from "@/lib/types"
+import { Derivative, EventTrace } from "@/lib/types"
 
-interface TraceCardPros {
-    event: EventType
-    product: (typeof Derivative)[keyof typeof Derivative]
+interface TraceCardProps {
     tokenId: number
-    owner: Address
-    blockNumber: number
+    product: Derivative
+    trace: EventTrace
 }
 
 const productText = ['Plasma', 'Erythrocytes', 'Platelets', 'Blood']
 
-export function TraceCard({event, product, tokenId, owner, blockNumber}: TraceCardPros){
+export function TraceCard({product, tokenId, trace}: TraceCardProps){
     return  <div className="
         block max-w-lg p-6 
         bg-gray-400 
-        border border-gray-200 rounded-2xl shadow 
+        border border-gray-900 rounded-2xl shadow 
         hover:bg-gray-500
         m-3">
 
-        <h5 className="mb-2 text-xl font-bold tracking-tight">{event}</h5>
-        <p>Product: {productText[Number(product)]}</p>
-        <p>ID: {String(tokenId)}</p>
-        <p>Owner: {owner}</p>
-        <p>Block: {blockNumber}</p>
+        <h5 className="mb-2 text-xl font-bold tracking-tight flex flex-row justify-between">
+            <span>{trace.event}</span><span>{formatDate(trace.timestamp)}</span>
+        </h5>
+        <p>{productText[Number(product)]}: <b>#{String(tokenId)}</b></p>
+        <p>Owner: {trace.owner}</p>
+        <p>Company: {trace.name}</p>
+        <p>Location: {trace.location}</p>
+        <p>Block: {trace.blockNumber}</p>
     </div>
 }
+
+function formatDate(date: Date) {
+    // Extraer componentes de la fecha
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son base 0, así que sumamos 1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+    // Construir la cadena de formato YYYY-MM-DD HH:mm:ss
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+  
