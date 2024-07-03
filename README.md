@@ -12,6 +12,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 cd foundry
 make deploy-anvil
 ```
+## Probar front con smart contracts en foundry en TSC
+0: contract BloodTracker 0x87B6e65B89a32b800a79A34C2fA25131430504D3
+1: contract BloodDonation 0x4BA7aA9FD03AA150691bD83d3e879E0C5F3553B1
+2: contract BloodDerivative 0xB9838B504037fFDa6C79EeC9fB62753A58ae9fe4
 
 3. Desplegamos el front:
 

@@ -1,1 +1,3 @@
 ANVIL_RPC_URL=http://localhost:8545
+TRIAS_RPC_URL=https://testnet.tscscan.io/testrpc
+TRIAS_KEY_ADDRESS=0x80b940f5261d499915d21cfc23fbb14d21a71b19

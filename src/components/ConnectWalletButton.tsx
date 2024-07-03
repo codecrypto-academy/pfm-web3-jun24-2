@@ -21,6 +21,8 @@ type WalletContextType = {
   setIsGetWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
   dropdownOpen: boolean | null;
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  role: Number,
+  setRole: React.Dispatch<React.SetStateAction<Number | null>>,
   web3: Web3 | null;
   setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>,
   walletType: string | null;
@@ -53,6 +55,7 @@ export const useWallet = () => {
 export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   const [account, setAccount] = useState("");
   const [network, setNetwork] = useState("");
+  const [role, setRole] = useState<Number | null>(null);
   const [installed, setInstalled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isGetWalletModalOpen, setIsGetWalletModalOpen] =
@@ -106,9 +109,7 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (account === "") {
-      router.push("/");
-    } else if (account) {
+    if (account !== "" && role != null) {
       router.push("/all-role-grid");
     }
   }, [account, router]);
@@ -195,6 +196,8 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     setIsGetWalletModalOpen,
     dropdownOpen,
     setDropdownOpen,
+    role,
+    setRole,
     web3,
     setWeb3,
     walletType,

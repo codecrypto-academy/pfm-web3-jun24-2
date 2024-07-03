@@ -1,7 +1,6 @@
-import Marketplace from "../Marketplace";
 import { useWallet } from "../ConnectWalletButton";
 import { useState, useEffect } from "react";
-function Trader() {
+function Donor() {
     const { account, web3 } = useWallet();
     const [balance, setBalance] = useState<Number>(0);
     useEffect(() => {
@@ -14,13 +13,14 @@ function Trader() {
     return (
         <>
             <div>
-                This is the Trader component
+                This is the Donor component
             </div>
             <div>
                 The balance of the {account} is {balance?.toString()} TAS
             </div>
         </>
+
     )
 }
 
-export default Trader;
+export default Donor;

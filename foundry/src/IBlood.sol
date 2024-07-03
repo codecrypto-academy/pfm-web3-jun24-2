@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 interface IBlood {
     // Tipos de hemoderivados
     enum Derivative {
+        IDLE,
         PLASMA,
         ERYTHROCYTES,
         PLATELETS
@@ -11,6 +12,7 @@ interface IBlood {
 
     // Grupos sanguineos
     enum BloodType {
+        IDLE,
         ABp,
         ABm,
         Ap,
@@ -23,6 +25,7 @@ interface IBlood {
 
     // Resultados de analisis
     enum AnalysisResult {
+        IDLE,
         Negative,
         Positive
     }

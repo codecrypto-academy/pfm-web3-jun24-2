@@ -6,13 +6,14 @@ import styles from "./Registro.module.css";
 import GetWalletModal from "@/components/GetWalletModal";
 import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
 import { useWallet } from "./ConnectWalletButton";
+import { useRouter } from "next/navigation";
 
 
 const roles = ["Donor", "Company"];
 const companyRoles = ["Collector Center", "Laboratory", "Trader"];
 
 const Register = () => {
-  const { account, web3 } = useWallet();
+  const { account, web3, setRole } = useWallet();
   const [companyRole, setCompanyRole] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [location, setLocation] = useState("");
@@ -21,7 +22,7 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [txHash, setTxHash] = useState<string | null>();
-
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -47,16 +48,16 @@ const Register = () => {
         roleNum = 0;
         break;
     }
-    console.log("Contract address from .env is ", process.env.REACT_APP_BLD_CONTRACT_ADDRESS)
-    const contractTracker = new web3.eth.Contract(abiTracker, "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
-    const receipt = await contractTracker.methods.signUp(companyName, location, roleNum).send({ from: account });
+    const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_CONTRACT_ADDRESS);
+    const receipt = await contractTracker.methods.signUp(companyName, location, roleNum).send({ from: account, gas: '1000000', gasPrice: 1000000000 });
     setTxHash(receipt.transactionHash);
-    window.location.reload();
+    setRole(roleNum);
+    router.push("/all-role-grid")
   };
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.title}>Register</h2>
+      <h2 className={styles.title}>Company register form</h2>
       <p>You will have only one wallet per company.</p>
       <form onSubmit={handleSubmit} className={styles.registerForm}>
         {
