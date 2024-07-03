@@ -1,9 +1,12 @@
 "use client";
 import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Web3 from "web3";
+import Web3, { AbiItem, Contract, ContractAbi } from "web3";
 import "./../app/globals.css";
 import GetWalletModal from "@/components/GetWalletModal";
+import { abi as abiTracker } from "@/lib/contracts/BloodTracker"
+import { abi as abiDonation } from "@/lib/contracts/BloodDonation"
+import { abi as abiDerivative } from "@/lib/contracts/BloodDerivative"
 
 type WalletContextType = {
   account: string | null;
@@ -28,6 +31,9 @@ type WalletContextType = {
   getWalletType: () => string;
   handleCloseModal: () => void;
   getWalletLogo: () => string;
+  contractTracker: Contract<typeof abiTracker> | undefined
+  contractDonation: Contract<typeof abiDonation> | undefined
+  contractDerivative: Contract<typeof abiDerivative> | undefined
 };
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -54,6 +60,9 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [walletType, setWalletType] = useState<string>("");
+  const [contractTracker, setContractTracker] = useState<Contract<typeof abiTracker>>()
+  const [contractDonation, setContractDonation] = useState<Contract<typeof abiDonation>>()
+  const [contractDerivative, setContractDerivative] = useState<Contract<typeof abiDerivative>>()
 
   const router = useRouter();
 
@@ -80,6 +89,11 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
         setWalletType(getWalletType());
 
         const networkId = window.ethereum.networkVersion;
+        if (networkId == process.env.NEXT_PUBLIC_CHAIN_ID){
+          setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
+          setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
+          setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
+        }
         setNetwork(getNetworkName(networkId));
       } else {
         setAccount("");
@@ -190,7 +204,10 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     getNetworkName,
     getWalletType,
     handleCloseModal,
-    getWalletLogo
+    getWalletLogo,
+    contractTracker,
+    contractDonation,
+    contractDerivative
   }
 
   return (
@@ -222,7 +239,10 @@ const WalletButton = () => {
     getNetworkName,
     getWalletType,
     handleCloseModal,
-    getWalletLogo } = useContext(WalletContext);
+    getWalletLogo,    
+    contractTracker,
+    contractDonation,
+    contractDerivative } = useContext(WalletContext);
 
   const router = useRouter();
 
