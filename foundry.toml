@@ -1,13 +1,16 @@
 [profile.default]
-src = "foundry/src"
-test = "foundry/test"
-out = "foundry/out"
-script = "foundry/script"
-cache_path = "foundry/cache"
-broadcast = "foundry/broadcast"
+src = "./foundry/src"
+test = "./foundry/test"
+out = "./foundry/out"
+script = "./foundry/script"
+cache_path = "./foundry/cache"
+broadcast = "./foundry/broadcast"
 libs = ["foundry/lib"]
 solc = "0.8.20"
-
+fs_permissions = [
+    { access = "read", path = "/home/juangas/codecrypto/proyecto_final/project-web3-jun24-2/foundry/broadcast" },
+    { access = "read", path = "/home/juangas/codecrypto/proyecto_final/project-web3-jun24-2/foundry/reports" },
+]
 [fmt]
 single_line_statement_blocks = "single"
 override_spacing = false

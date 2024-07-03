@@ -92,7 +92,7 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
         setWalletType(getWalletType());
 
         const networkId = window.ethereum.networkVersion;
-        if (networkId == process.env.NEXT_PUBLIC_CHAIN_ID){
+        if (networkId == process.env.NEXT_PUBLIC_CHAIN_ID) {
           setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
           setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
           setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
@@ -129,6 +129,7 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
 
         const networkId = await web3?.eth.net.getId();
         setNetwork(getNetworkName(networkId));
+        router.push("/all-role-grid");
       } catch (error) {
         console.error(error);
       }
@@ -242,7 +243,7 @@ const WalletButton = () => {
     getNetworkName,
     getWalletType,
     handleCloseModal,
-    getWalletLogo,    
+    getWalletLogo,
     contractTracker,
     contractDonation,
     contractDerivative } = useContext(WalletContext);

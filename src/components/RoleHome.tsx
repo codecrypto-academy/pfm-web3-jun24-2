@@ -26,14 +26,14 @@ const RolesGrid = () => {
 
     const getRole = async () => {
       if (web3) {
-        const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_CONTRACT_ADDRESS);
+        const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
         const company = await contractTracker.methods.companies(account).call({ from: account });
         // Check if it is a donor
         console.log("Rol compañia", company.role)
         if (Number(company.role) === 0) {
           const donor = await contractTracker.methods.donors(account).call({ from: account });
           console.log("Sangre del donante", donor.bloodType)
-          if (donor.bloodType != 0) {
+          if (donor.balance != 0) {
             setRole(4);
           } else {
             setRole(5);
