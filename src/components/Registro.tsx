@@ -48,7 +48,7 @@ const Register = () => {
         roleNum = 0;
         break;
     }
-    const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_CONTRACT_ADDRESS);
+    const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
     const receipt = await contractTracker.methods.signUp(companyName, location, roleNum).send({ from: account, gas: '1000000', gasPrice: 1000000000 });
     setTxHash(receipt.transactionHash);
     setRole(roleNum);

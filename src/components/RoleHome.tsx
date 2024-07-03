@@ -31,7 +31,7 @@ const RolesGrid = () => {
         if (Number(company.role) === 0) {
           const donor = await contractTracker.methods.donors(account).call({ from: account });
           console.log("Sangre del donante", donor.bloodType)
-          if (donor.bloodType != 0) {
+          if (donor.balance != 0) {
             setRole(4);
           } else {
             setRole(5);

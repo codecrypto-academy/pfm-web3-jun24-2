@@ -19,6 +19,7 @@ function Trader() {
             <div>
                 The balance of the {account} is {balance?.toString()} TAS
             </div>
+            <Marketplace></Marketplace>
         </>
     )
 }
