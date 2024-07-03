@@ -45,8 +45,8 @@ export interface ProductTrace {
 }
 
 export enum Derivative {
-    Plasma = 0,
-    Erythrocytes = 1,
-    Platelets = 2,
-    Blood = 3
+    Plasma = 1,
+    Erythrocytes = 2,
+    Platelets = 3,
+    Blood = 4
 }

@@ -3,7 +3,7 @@
 import { Spinner } from "@/components/Spinner"
 import { getTraceFromDonation } from "@/lib/events"
 import { useEffect, useState } from "react"
-import { TraceBranch } from "@/components/TraceBranch"
+import { TraceBranch } from "@/components/TraceComponents/TraceBranch"
 import { Derivative } from "@/lib/types"
 
 type FullTrace = Awaited<ReturnType<typeof getTraceFromDonation>>

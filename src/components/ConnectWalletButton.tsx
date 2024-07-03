@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Web3, { AbiItem, Contract, ContractAbi } from "web3";
+import Web3, { Contract } from "web3";
 import "./../app/globals.css";
 import GetWalletModal from "@/components/GetWalletModal";
 import { abi as abiTracker } from "@/lib/contracts/BloodTracker"
@@ -96,6 +96,10 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
           setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
           setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
           setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
+        } else {
+          setContractTracker(undefined)
+          setContractDonation(undefined)
+          setContractDerivative(undefined)
         }
         setNetwork(getNetworkName(networkId));
       } else {

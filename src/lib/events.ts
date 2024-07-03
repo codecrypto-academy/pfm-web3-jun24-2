@@ -103,7 +103,7 @@ export async function getEventsFromDonation(tokenId: number){
  * @param tokenId Id del token que se desea la traza. Puede ser de una donación o un derivado
  * @returns Traza completa del evento Transfer
  */
-export async function getEventsFromDerivative(tokenId: number, fromBlock: number){
+export async function getEventsFromDerivative(tokenId: number, fromBlock: number = Number(process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK)){
     const events = await contractDerivative.getPastEvents('Transfer', {
         filter: { tokenId: tokenId },
         fromBlock: fromBlock,

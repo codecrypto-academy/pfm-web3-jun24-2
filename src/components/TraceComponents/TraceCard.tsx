@@ -6,7 +6,7 @@ interface TraceCardProps {
     trace: EventTrace
 }
 
-const productText = ['Plasma', 'Erythrocytes', 'Platelets', 'Blood']
+const productText = [undefined, 'Plasma', 'Erythrocytes', 'Platelets', 'Blood']
 
 export function TraceCard({product, tokenId, trace}: TraceCardProps){
     return  <div className="

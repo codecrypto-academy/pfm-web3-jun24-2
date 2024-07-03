@@ -4,7 +4,6 @@ import styles from "./RoleHome.module.css";
 import { AppContainer } from "../app/layout";
 import { useWallet } from "./ConnectWalletButton";
 import Register from "./Registro";
-import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
 import DonationCenter from "./Roles/DonationCenter";
 import Laboratory from "./Roles/Laboratory";
 import Trader from "./Roles/Trader";
@@ -19,15 +18,14 @@ const rolesData = [
 ];
 
 const RolesGrid = () => {
-  const { account, web3, role, setRole } = useWallet();
+  const { account, web3, role, setRole, contractTracker } = useWallet();
   const router = useRouter();
 
   useEffect(() => {
-
+    
     const getRole = async () => {
-      if (web3) {
-        const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_CONTRACT_ADDRESS);
-        const company = await contractTracker.methods.companies(account).call({ from: account });
+      if (web3 && contractTracker) {
+        const company = await contractTracker.methods.companies(account).call();
         // Check if it is a donor
         console.log("Rol compañia", company.role)
         if (Number(company.role) === 0) {
@@ -51,19 +49,14 @@ const RolesGrid = () => {
     switch (role) {
       case null:
         return <Spinner />
-        break;
       case 1:
         return <DonationCenter />
-        break;
       case 2:
         return <Laboratory />
-        break;
       case 3:
         return <Trader />
-        break;
       case 4:
-        return <Donor></Donor>
-        break;
+        return <Donor />
       default:
         return (
           <>
