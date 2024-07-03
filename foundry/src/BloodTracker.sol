@@ -176,7 +176,7 @@ contract BloodTracker is IBlood, Marketplace {
     ////////Getters////////
     ///////////////////////////
 
-    function getMinimumDonationFee() public returns (uint256) {
+    function getMinimumDonationFee() public pure returns (uint256) {
         return MINIMUM_DONATION_FEE;
     }
 }
