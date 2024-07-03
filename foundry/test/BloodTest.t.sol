@@ -18,10 +18,13 @@ contract BloodTest is Test {
     address immutable DONATION_CENTER = makeAddr("DONATION_CENTER");
     address immutable LABORATORY = makeAddr("LABORATORY");
     address immutable TRADER = makeAddr("TRADER");
+    uint256 MINIMUM_DONATION_FEE;
 
     function setUp() external {
         DeployBlood deploy = new DeployBlood();
         (bldTracker, bld, der) = deploy.run();
+        vm.deal(DONATION_CENTER, 1 ether);
+        MINIMUM_DONATION_FEE = bldTracker.getMinimumDonationFee();
         vm.prank(DONATION_CENTER);
         bldTracker.signUp(
             "donationCenter",
@@ -40,7 +43,7 @@ contract BloodTest is Test {
 
     function testDonateFunction() public returns (uint256 tokenId) {
         vm.prank(DONATION_CENTER);
-        tokenId = bldTracker.donate(USER, IBlood.BloodType.ABp);
+        tokenId = bldTracker.donate{value: MINIMUM_DONATION_FEE}(USER);
         assert(DONATION_CENTER == bld.ownerOf(tokenId));
     }
 
@@ -62,7 +65,7 @@ contract BloodTest is Test {
     }
 
     function testFailDonateFunction() public {
-        bldTracker.donate(DONATION_CENTER, IBlood.BloodType.ABp);
+        bldTracker.donate(DONATION_CENTER);
     }
 
     function testListItemMarketplaceLabRole() public returns (uint256 tokenId) {

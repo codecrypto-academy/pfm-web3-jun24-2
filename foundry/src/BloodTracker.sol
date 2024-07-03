@@ -11,9 +11,11 @@ contract BloodTracker is IBlood, Marketplace {
     error BloodTracker__IncorrectRole(Role required, Role yourRole);
     error BloodTracker__AddressAlreadyRegistered();
     error BloodTracker__RoleNotAdmitted();
+    error BloodTracker__MinimumDonationFeeNotMet();
 
     BloodDonation bld;
     BloodDerivative der;
+    uint256 constant MINIMUM_DONATION_FEE = 0.001 ether;
 
     enum Role {
         NO_REGISTERED,
@@ -93,6 +95,9 @@ contract BloodTracker is IBlood, Marketplace {
         uniqueAddress(_from)
         returns (uint256)
     {
+        if (msg.value < MINIMUM_DONATION_FEE) {
+            revert BloodTracker__MinimumDonationFeeNotMet();
+        }
         // Sumamos los ethers al balance del donante
         donors[_from].balance += msg.value;
         // Creamos el token que representa la unidad de sangre
@@ -165,5 +170,13 @@ contract BloodTracker is IBlood, Marketplace {
         uint256 tokenId // isNotOwner(nftAddress, tokenId, msg.sender)
     ) public payable override onlyRole(Role.TRADER) {
         super.buyItem(nftAddress, tokenId);
+    }
+
+    ///////////////////////////
+    ////////Getters////////
+    ///////////////////////////
+
+    function getMinimumDonationFee() public returns (uint256) {
+        return MINIMUM_DONATION_FEE;
     }
 }
