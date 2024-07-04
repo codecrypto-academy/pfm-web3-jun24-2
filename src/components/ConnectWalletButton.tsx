@@ -23,6 +23,7 @@ type WalletContextType = {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>,
   role: Number,
   setRole: React.Dispatch<React.SetStateAction<Number | null>>,
+  getRole: Promise<void>,
   web3: Web3 | null;
   setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>,
   walletType: string | null;
@@ -97,9 +98,9 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
           setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
           setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
         } else {
-          setContractTracker(undefined)
-          setContractDonation(undefined)
-          setContractDerivative(undefined)
+          setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
+          setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
+          setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
         }
         setNetwork(getNetworkName(networkId));
       } else {
@@ -157,6 +158,25 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     }
   };
 
+  const getRole = async () => {
+    if (web3 && contractTracker) {
+      const company = await contractTracker.methods.companies(account).call();
+      // Check if it is a donor
+      console.log("Rol compañia", company.role)
+      if (Number(company.role) === 0) {
+        const donor = await contractTracker.methods.donors(account).call({ from: account });
+        console.log("Sangre del donante", donor.bloodType)
+        if (donor.balance != 0) {
+          setRole(4);
+        } else {
+          setRole(5);
+        }
+      } else {
+        setRole(Number(company.role));
+      }
+    }
+  }
+
   const getNetworkName = (networkId: string) => {
     switch (networkId) {
       case "1":
@@ -203,6 +223,7 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     setDropdownOpen,
     role,
     setRole,
+    getRole,
     web3,
     setWeb3,
     walletType,
