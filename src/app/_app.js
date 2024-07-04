@@ -1,9 +1,12 @@
 import Layout from "./layout";
+import { Wallet } from "@/components/ConnectWalletButton";
 
 function MyApp({ Component, pageProps }) {
   return (
     <Layout>
-      <Component {...pageProps} />
+      <Wallet>
+        <Component {...pageProps} />
+      </Wallet>
     </Layout>
   );
 }

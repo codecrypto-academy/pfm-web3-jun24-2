@@ -22,7 +22,7 @@ const RolesGrid = () => {
   const router = useRouter();
 
   useEffect(() => {
-    
+
     const getRole = async () => {
       if (web3 && contractTracker) {
         const company = await contractTracker.methods.companies(account).call();
