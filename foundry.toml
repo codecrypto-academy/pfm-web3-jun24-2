@@ -7,6 +7,9 @@ cache_path = "./foundry/cache"
 broadcast = "./foundry/broadcast"
 libs = ["foundry/lib"]
 solc = "0.8.20"
+remappings = [
+    "forge-std/=foundry/lib/foundry-devops/lib/forge-std/src/"
+]
 fs_permissions = [
     { access = "read", path = "/home/juangas/codecrypto/proyecto_final/project-web3-jun24-2/foundry/broadcast" },
     { access = "read", path = "/home/juangas/codecrypto/proyecto_final/project-web3-jun24-2/foundry/reports" },
