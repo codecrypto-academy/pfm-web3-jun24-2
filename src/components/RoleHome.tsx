@@ -1,9 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styles from "./RoleHome.module.css";
 import { AppContainer } from "../app/layout";
 import { useWallet } from "./ConnectWalletButton";
-import Register from "./Registro";
 import DonationCenter from "./Roles/DonationCenter";
 import Laboratory from "./Roles/Laboratory";
 import Trader from "./Roles/Trader";
@@ -18,31 +17,14 @@ const rolesData = [
 ];
 
 const RolesGrid = () => {
-  const { account, web3, role, setRole, contractTracker } = useWallet();
+  const { account, web3, role, setRole, getRole, contractTracker } = useWallet();
   const router = useRouter();
 
   useEffect(() => {
 
-    const getRole = async () => {
-      if (web3 && contractTracker) {
-        const company = await contractTracker.methods.companies(account).call();
-        // Check if it is a donor
-        console.log("Rol compañia", company.role)
-        if (Number(company.role) === 0) {
-          const donor = await contractTracker.methods.donors(account).call({ from: account });
-          console.log("Sangre del donante", donor.bloodType)
-          if (donor.balance != 0) {
-            setRole(4);
-          } else {
-            setRole(5);
-          }
-        } else {
-          setRole(Number(company.role));
-        }
-      }
-    }
     getRole();
-  }, [account, web3]);
+
+  }, [account, web3, role]);
 
   const getRoleComponent = (role) => {
 

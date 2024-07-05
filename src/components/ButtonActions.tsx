@@ -4,18 +4,19 @@ import styled from "styled-components";
 interface ButtonProps {
   text: string;
   blue?: boolean;
-  onClick: (index: number) => void;
-  index: number;
+  onClick: (tokenId: Number, price: string) => void;
+  tokenId: Number,
+  price: string
 }
 
-const Button: React.FC<ButtonProps> = ({ text, blue = false, onClick, index }) => {
+const ButtonActions: React.FC<ButtonProps> = ({ text, blue = false, onClick, tokenId, price }) => {
   return (
     <Div>
-      <button key={index} onClick={() => onClick(index)} className={`${blue ? "blue" : ""}`}>{text}</button>
+      <button key={tokenId} onClick={() => onClick(tokenId, price)} className={`${blue ? "blue" : ""}`}>{text}</button>
     </Div>
   );
 }
-export default Button;
+export default ButtonActions;
 const Div = styled.div`
   button {
     border-radius: 4rem;

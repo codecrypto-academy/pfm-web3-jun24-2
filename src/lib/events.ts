@@ -5,6 +5,7 @@ import { abi as abiTracker } from "./contracts/BloodTracker"
 import { abi as abiDonation } from "./contracts/BloodDonation"
 import { abi as abiDerivative } from "./contracts/BloodDerivative"
 import { Address, DonationEventLog, EventTrace, EventType, TransferEventLog } from "./types"
+
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const web3 = new Web3(window?.ethereum)
@@ -103,7 +104,7 @@ export async function getEventsFromDonation(tokenId: number) {
  * @param tokenId Id del token que se desea la traza. Puede ser de una donación o un derivado
  * @returns Traza completa del evento Transfer
  */
-export async function getEventsFromDerivative(tokenId: number, fromBlock: number = Number(process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK)){
+export async function getEventsFromDerivative(tokenId: number, fromBlock: number = Number(process.env.NEXT_PUBLIC_DEPLOYMENT_BLOCK)) {
     const events = await contractDerivative.getPastEvents('Transfer', {
         filter: { tokenId: tokenId },
         fromBlock: fromBlock,

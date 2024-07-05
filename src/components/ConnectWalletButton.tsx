@@ -23,7 +23,7 @@ type WalletContextType = {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>,
   role: Number,
   setRole: React.Dispatch<React.SetStateAction<Number | null>>,
-  getRole: Promise<void>,
+  getRole: () => Promise<void>,
   web3: Web3 | null;
   setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>,
   walletType: string | null;
@@ -114,10 +114,15 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (account !== "" && role != null) {
-      router.push("/all-role-grid");
+    async () => {
+      await getRole()
+      console.log("El role es", role)
+      if (account !== "" && role !== null && role !== 0) {
+        router.push("/all-role-grid");
+      }
     }
-  }, [account, router]);
+
+  }, [account, role]);
 
   const handleConnectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {

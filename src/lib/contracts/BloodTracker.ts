@@ -366,21 +366,14 @@ export const abi = [
         "name": "getListing",
         "outputs": [
             {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "price",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "seller",
-                        "type": "address"
-                    }
-                ],
-                "internalType": "struct Marketplace.Listing",
+                "internalType": "uint256",
                 "name": "",
-                "type": "tuple"
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",

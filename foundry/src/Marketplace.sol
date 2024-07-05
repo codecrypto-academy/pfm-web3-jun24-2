@@ -203,8 +203,11 @@ contract Marketplace is ReentrancyGuard {
     function getListing(
         address nftAddress,
         uint256 tokenId
-    ) external view returns (Listing memory) {
-        return s_listings[nftAddress][tokenId];
+    ) external view returns (uint256, address) {
+        return (
+            s_listings[nftAddress][tokenId].price,
+            s_listings[nftAddress][tokenId].seller
+        );
     }
 
     function getTokensOnSale(

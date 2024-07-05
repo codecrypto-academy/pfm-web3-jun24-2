@@ -28,6 +28,15 @@ const Section = styled.section`
       border-color: #7b7e86;
     }
   }
+  .button-container-grid {
+    display: flex;
+    color: #222222;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0 1rem;
+    margin-bottom: 1rem;      
+  }
   .marketPlaces {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -46,12 +55,17 @@ const Section = styled.section`
       }
       .image {
         margin-bottom: 1rem;
+        margin-top: 1rem;
+        padding: 0 3rem;
+        align-items: center;
+        justify-content: space-between;
       }
       .name {
         display: flex;
         color: #222222;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 1rem;
         padding: 0 1rem;
         h4 {
         }
@@ -65,7 +79,8 @@ const Section = styled.section`
       .price-container {
         padding: 0 1rem;
         display: flex;
-        justify-content: space-between;
+        margin-bottom: 1rem;
+        // justify-content: space-between;
         color: #02204e;
       }
     }

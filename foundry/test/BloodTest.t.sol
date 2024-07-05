@@ -145,11 +145,10 @@ contract BloodTest is Test {
     {
         uint256 tokenId = testListItemMarketplaceLabRole();
         uint256 beforeBalance = bld.balanceOf(TRADER);
-        Marketplace.Listing memory listedItem = bldTracker.getListing(
+        (uint256 price, address seller) = bldTracker.getListing(
             address(bld),
             tokenId
         );
-        address seller = listedItem.seller;
         uint256 beforeBuySellerBalance = address(seller).balance;
         hoax(TRADER);
         bldTracker.buyItem{value: 0.1 ether}(address(bld), tokenId);
@@ -183,10 +182,10 @@ contract BloodTest is Test {
         uint256 tokenId = testListItemMarketplaceTraderRole();
         vm.prank(TRADER);
         bldTracker.updateListing(address(bld), tokenId, newPrice);
-        Marketplace.Listing memory listedItem = bldTracker.getListing(
+        (uint256 price, address seller) = bldTracker.getListing(
             address(bld),
             tokenId
         );
-        assert(listedItem.price == newPrice);
+        assert(price == newPrice);
     }
 }

@@ -5,13 +5,14 @@ import { abi as abiDerivative } from "@/../../src/lib/contracts/BloodDerivative"
 import { abi as abiDonation } from "@/../../src/lib/contracts/BloodDonation";
 import { BsThreeDots } from "react-icons/bs";
 import { FaEthereum } from "react-icons/fa";
-import styled from "styled-components";
 import Button from "./Button";
+import ButtonActions from "./ButtonActions";
 import { useState } from "react";
 import { Spinner } from "./Spinner";
 import Link from "next/link";
-import Section from "./Section";
+import Section from "./SectionMarketplace";
 import { AppContainer } from "@/app/layout";
+
 
 export const getDerivativeTypeFromNumber = (derivativeType: Number) => {
     switch (derivativeType) {
@@ -45,7 +46,8 @@ function Marketplace() {
         tokenId: Number;
         typeString: string;
         typeNumber: Number;
-        price: Number;
+        price: string;
+        priceEther: string;
         seller: string;
         image: string;
     }
@@ -62,6 +64,17 @@ function Marketplace() {
         setButtonIndex(index);
     }
 
+    const getImageFromDerivative = (derivativeType: Number) => {
+        switch (derivativeType) {
+            case 1:
+                return "/plasma.png"
+            case 2:
+                return "/erythrocytes.png"
+            case 3:
+                return "/plaquetes.png"
+        }
+    }
+
     useEffect(() => {
         const getTokensOnSale = async () => {
             var tokens: tokenInterface[] = [];
@@ -70,17 +83,20 @@ function Marketplace() {
                     const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
                     const result = await contractTracker.methods.getTokensOnSale(address).call({ from: account })
                     for (const tokenId of result) {
-                        const contract = new web3.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
-                        const derivativeType = contract.methods.products(tokenId).arguments[0];
-                        const marketplaceData = contractTracker.methods.getListing(address, tokenId);
+                        const contract = new web3.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS);
+                        const derivativeType = await contract.methods.products(tokenId).arguments[0];
+                        const marketplaceData = await contractTracker.methods.getListing(address, tokenId).call({ from: account });
+                        console.log("derivativeType", derivativeType)
+                        console.log("marketplaceData", marketplaceData)
                         tokens.push({
-                            tokenAddress: address,
+                            tokenAddress: process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS,
                             tokenId: Number(tokenId),
                             typeString: getDerivativeTypeFromNumber(Number(derivativeType)),
                             typeNumber: Number(derivativeType),
-                            price: web3.utils.fromWei(Number(marketplaceData.arguments[1]), "ether"),
-                            seller: marketplaceData.arguments[0].toString(),
-                            image: "/AB_blood_group512px.png"
+                            price: marketplaceData[0].toString(),
+                            priceEther: web3.utils.fromWei(Number(marketplaceData[0]), "ether"),
+                            seller: marketplaceData[1].toString(),
+                            image: getImageFromDerivative(Number(derivativeType))
                         })
                     }
                 }
@@ -95,6 +111,26 @@ function Marketplace() {
         }
         getTokensOnSale();
     }, [buttonIndex, web3, account]);
+
+    const handleBuyButtonClick = async (tokenId: Number, price: string) => {
+        if (web3) {
+            console.log("Item buy", Number);
+            const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
+            await contractTracker.methods.buyItem(process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS, tokenId).send({ value: price, from: account, gas: '1000000', gasPrice: 1000000000 })
+            console.log("Token selled")
+            window.location.reload();
+        }
+    }
+
+    const handleCancelButtonClick = async (tokenId: Number, price: string) => {
+        if (web3) {
+            const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
+            await contractTracker.methods.cancelListing(process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS, tokenId).send({ from: account, gas: '1000000', gasPrice: 1000000000 })
+            console.log("Token cancelled")
+            window.location.reload()
+        }
+    }
+
 
     return (
         <AppContainer>
@@ -113,33 +149,52 @@ function Marketplace() {
                 {
                     tokensOnSale.length !== 0 ?
                         <div key="marketPlaces" className="marketPlaces">
-                            {tokensOnSale.map(({ typeString, tokenId, price, image }, index) => {
+                            <Link key={`marketplace`} href={`/marketplace/derivative/listItem`} style={{ textDecoration: 'none' }}>
+                                <div key={`marketplace`} className="marketplace">
+                                    <div className="image">
+                                        <img src={"/addItem.png"} alt="marketplace" />
+                                    </div>
+                                    <div className="name">
+                                        <h4>ADD ITEM</h4>
+                                    </div>
+                                    <div className="price-container">
+                                    </div>
+                                </div>
+                            </Link>
+                            {tokensOnSale.map(({ typeString, tokenId, price, priceEther, image, seller }, index) => {
                                 return (
-                                    <Link key={`marketplace-${index}`} href={`/marketplace/derivative/${tokenId}`} style={{ textDecoration: 'none' }}>
-                                        <div key={`marketplace-${index}`} className="marketplace">
-                                            <div className="image">
-                                                <img src={image} alt="marketplace" />
-                                            </div>
-                                            <div className="name">
-                                                <h4>{typeString}</h4>
-                                                <BsThreeDots />
-                                            </div>
-                                            <h3>{tokenId.toString()}</h3>
-                                            <div className="price-container">
-                                                <h5 className="price">{price.toString()}</h5>
-                                                <FaEthereum />
-                                            </div>
+                                    // <Link key={`marketplace-${index}`} href={`/marketplace/derivative/${tokenId}`} style={{ textDecoration: 'none' }}>
+                                    <div key={`marketplace-${index}`} className="marketplace">
+                                        <div className="image">
+                                            <img src={image} alt="marketplace" />
                                         </div>
-                                    </Link>
+                                        <div className="name">
+                                            <h4>{`${typeString} ${tokenId}`}</h4>
+                                        </div>
+                                        <div className="name">
+                                            <h5 className="price">{seller}</h5>
+                                        </div>
+                                        <div className="price-container">
+                                            <h5 className="price">{priceEther}</h5>
+                                            <FaEthereum />
+                                        </div>
+                                        <div className="price-container">
+                                        </div>
+                                        <div className="button-container-grid">
+                                            <ButtonActions onClick={handleBuyButtonClick} text={"Buy"} blue={true} key={1} tokenId={tokenId} price={price} />
+                                            {web3.utils.toChecksumAddress(seller) === web3.utils.toChecksumAddress(account) ?
+                                                <ButtonActions onClick={handleCancelButtonClick} text={"Cancel"} blue={true} key={1} tokenId={tokenId} price={price} />
+                                                :
+                                                <ButtonActions text={"Cancel"} blue={false} key={2} tokenId={tokenId} price={price} />}
+
+                                        </div>
+                                    </div>
                                 );
                             })}
-                        </div> : <Spinner></Spinner>
+                        </div> : <></>
                 }
-
             </Section>
         </AppContainer>
-
-
     );
 }
 
