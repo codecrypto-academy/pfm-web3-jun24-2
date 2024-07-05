@@ -11,7 +11,6 @@
 source ../.env.local
 
 
-
 cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "signUp(string,string,uint8)" "Hospital La Fe", "Valencia", 1 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account donationCenter --password-file .password
 cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "signUp(string,string,uint8)" "Hospital La Fe", "Valencia", 2 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
 cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "signUp(string,string,uint8)" "Hospital La Fe", "Valencia", 3 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account trader --password-file .password
@@ -37,10 +36,10 @@ cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,ui
 # List item function 
 
 cast send $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS "approve(address,uint256)" $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS 1 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
-cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 1 1 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
+cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 1 1450 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
 cast send $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS "approve(address,uint256)" $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS 2 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
-cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 2 1 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
+cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 2 2345 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
 cast send $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS "approve(address,uint256)" $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS 3 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
-cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 3 1 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
+cast send $NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS "listItem(address,uint256,uint256)" $NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS 3 4567 --legacy --rpc-url $NEXT_PUBLIC_NETWORK_RPC --account laboratory --password-file .password
 
 

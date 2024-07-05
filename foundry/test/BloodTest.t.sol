@@ -139,7 +139,10 @@ contract BloodTest is Test {
     //     bldTracker.buyItem{value: 0.1 ether}(address(testBloodMarketPlace), 0);
     // }
 
-    function testBuyItemMarketplaceWithoutTraderRole() external {
+    function testBuyItemMarketplaceWithoutTraderRole()
+        public
+        returns (uint256)
+    {
         uint256 tokenId = testListItemMarketplaceLabRole();
         uint256 beforeBalance = bld.balanceOf(TRADER);
         Marketplace.Listing memory listedItem = bldTracker.getListing(
@@ -156,6 +159,15 @@ contract BloodTest is Test {
         assert(bld.balanceOf(address(bldTracker)) == 0);
         console.log("balance of laboratory", LABORATORY.balance);
         assert(beforeBuySellerBalance < afterBuySellerBalance);
+        return (tokenId);
+    }
+
+    function testRelistItem() external {
+        uint256 tokenId = testBuyItemMarketplaceWithoutTraderRole();
+        vm.startPrank(TRADER);
+        bld.approve(address(bldTracker), tokenId);
+        bldTracker.listItem(address(bld), tokenId, 1);
+        vm.stopPrank();
     }
 
     function testCancelListingFunction() public {
