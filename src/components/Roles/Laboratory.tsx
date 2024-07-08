@@ -53,7 +53,7 @@ export default function Laboratory() {
         const arrListedDerivatives = []
         const tokensOnSale = await contractTracker!.methods.getTokensOnSale(contractDerivative?.options.address).call()
         for (const tokenId of tokensOnSale){
-            const {seller, price} = await contractTracker!.methods.getListing(contractDerivative!.options.address, tokenId).call()
+            const {"0": price, "1": seller} = await contractTracker!.methods.getListing(contractDerivative!.options.address, tokenId).call()
             if (web3!.utils.toChecksumAddress(seller) !== web3!.utils.toChecksumAddress(account!)) continue
             const {tokenIdOrigin, derivative} = await contractDerivative!.methods.products(tokenId).call()
             const events = await getEventsFromDerivative(Number(tokenId))
