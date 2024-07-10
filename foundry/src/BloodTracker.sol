@@ -38,8 +38,8 @@ contract BloodTracker is IBlood, Marketplace {
     }
 
     mapping(address donorWallet => Donor) public donors;
-
     mapping(address companyWallet => Company) public companies;
+    address[] public donationCenters; 
 
     event Donation(
         address indexed donor,
@@ -80,9 +80,13 @@ contract BloodTracker is IBlood, Marketplace {
         string memory _name,
         string memory _location,
         Role _role
-    ) external uniqueAddress(msg.sender) onlyRole(Role.NO_REGISTERED) {
+    ) external uniqueAddress(msg.sender) {
         if (_role == Role.NO_REGISTERED) revert BloodTracker__RoleNotAdmitted();
         companies[msg.sender] = Company(_name, _location, _role);
+
+        if (_role == Role.DONATION_CENTER) {
+            donationCenters.push(msg.sender); // Agregar a los centros de donación
+        }
     }
 
     // Función principal para que los centros de extracción puedan crear una nueva donación
@@ -106,6 +110,10 @@ contract BloodTracker is IBlood, Marketplace {
         emit Donation(_from, msg.sender, tokenId, msg.value);
 
         return tokenId;
+    }
+
+    function getDonationCenters() external view returns (address[] memory) {
+        return donationCenters;
     }
 
     // Función para analisar la sangre -- PENDIENTE DE MOMENTO
