@@ -11,10 +11,10 @@ import GetWalletModal from "@/components/GetWalletModal";
 
 const roles = [
   { name: "Register", path: "/role-registro" },
-  { name: "Donor", path: "/role-donor" },
-  { name: "Collector Center", path: "/role-collector-center" },
-  { name: "Laboratory", path: "/role-laboratory" },
-  { name: "Trader", path: "/role-traders" },
+  { name: "Donor", path: "/all-role-grid" },
+  { name: "Collector Center", path: "/all-role-grid" },
+  { name: "Laboratory", path: "/all-role-grid" },
+  { name: "Trader", path: "/all-role-grid" },
 ];
 
 const Header = () => {
@@ -38,10 +38,6 @@ const Header = () => {
     } else {
       router.push(path);
     }
-  };
-
-  const handlePartnersClick = () => {
-    router.push("/all-role-grid");
   };
 
   return (
@@ -100,8 +96,8 @@ const Header = () => {
               </div>
             </div>
             <div className="nav-item dropdown">
-            <div className="nav-link" onClick={handlePartnersClick}>Partners</div>
-            <div className="dropdown-content">
+              <div className="nav-link"> Partners</div>
+              <div className="dropdown-content">
                 {roles.map((role) => (
                   <div
                     key={role.name}

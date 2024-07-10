@@ -1,0 +1,65 @@
+.headerSection {
+  margin-top: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.headerSectionDos {
+  margin-top: 45px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.headerSection h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.headerSection p {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.rolesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 40px;
+  min-height: 50vh;
+  text-align: center;
+}
+
+.roleBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 230px;
+  height: 250px;
+  box-sizing: border-box;
+}
+
+.roleBox:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.roleImg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.roleName {
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+}
