@@ -1,0 +1,76 @@
+.headerSection {
+  margin-top: 80px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.headerSection h1 {
+  font-size: 2.4rem; /* Reduced by 20% */
+  margin-bottom: 20px;
+}
+
+.headerSection p {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.walletInfo {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+.headerSectionDos {
+  text-align: left;
+  margin-bottom: 20px;
+  width: 100%;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.headerSectionDos h1 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #333; /* Dark grey */
+}
+
+.headerSectionDos p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #6a1b9a;
+}
+
+.registerForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin-top: 20px;
+  margin-bottom: 250px;
+  margin-left: 500px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+}

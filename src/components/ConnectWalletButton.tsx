@@ -1,42 +1,48 @@
 "use client";
-import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import Web3, { Contract } from "web3";
 import "./../app/globals.css";
 import GetWalletModal from "@/components/GetWalletModal";
-import { abi as abiTracker } from "@/lib/contracts/BloodTracker"
-import { abi as abiDonation } from "@/lib/contracts/BloodDonation"
-import { abi as abiDerivative } from "@/lib/contracts/BloodDerivative"
+import { abi as abiTracker } from "@/lib/contracts/BloodTracker";
+import { abi as abiDonation } from "@/lib/contracts/BloodDonation";
+import { abi as abiDerivative } from "@/lib/contracts/BloodDerivative";
 
 type WalletContextType = {
   account: string | null;
-  setAccount: React.Dispatch<React.SetStateAction<string>>,
+  setAccount: React.Dispatch<React.SetStateAction<string>>;
   network: string | null;
-  setNetwork: React.Dispatch<React.SetStateAction<string>>,
+  setNetwork: React.Dispatch<React.SetStateAction<string>>;
   installed: boolean | null;
-  setInstalled: React.Dispatch<React.SetStateAction<boolean>>,
+  setInstalled: React.Dispatch<React.SetStateAction<boolean>>;
   isModalOpen: boolean | null;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isGetWalletModalOpen: boolean | null;
-  setIsGetWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsGetWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   dropdownOpen: boolean | null;
-  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  role: Number,
-  setRole: React.Dispatch<React.SetStateAction<Number | null>>,
-  getRole: () => Promise<void>,
+  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  role: Number;
+  setRole: React.Dispatch<React.SetStateAction<Number | null>>;
+  getRole: () => Promise<void>;
   web3: Web3 | null;
-  setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>,
+  setWeb3: React.Dispatch<React.SetStateAction<Web3 | null>>;
   walletType: string | null;
-  setWalletType: React.Dispatch<React.SetStateAction<string>>,
+  setWalletType: React.Dispatch<React.SetStateAction<string>>;
   handleConnectWallet: () => Promise<void>;
   handleLogout: () => Promise<void>;
   getNetworkName: (networkId: string) => string;
   getWalletType: () => string;
   handleCloseModal: () => void;
   getWalletLogo: () => string;
-  contractTracker: Contract<typeof abiTracker> | undefined
-  contractDonation: Contract<typeof abiDonation> | undefined
-  contractDerivative: Contract<typeof abiDerivative> | undefined
+  contractTracker: Contract<typeof abiTracker> | undefined;
+  contractDonation: Contract<typeof abiDonation> | undefined;
+  contractDerivative: Contract<typeof abiDerivative> | undefined;
 };
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -48,10 +54,10 @@ type WalletProviderProps = {
 export const useWallet = () => {
   const context = useContext(WalletContext);
   if (!context) {
-    throw new Error('useWallet must be used within a Wallet component');
+    throw new Error("useWallet must be used within a Wallet component");
   }
   return context;
-}
+};
 
 export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   const [account, setAccount] = useState("");
@@ -64,9 +70,12 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [walletType, setWalletType] = useState<string>("");
-  const [contractTracker, setContractTracker] = useState<Contract<typeof abiTracker>>()
-  const [contractDonation, setContractDonation] = useState<Contract<typeof abiDonation>>()
-  const [contractDerivative, setContractDerivative] = useState<Contract<typeof abiDerivative>>()
+  const [contractTracker, setContractTracker] =
+    useState<Contract<typeof abiTracker>>();
+  const [contractDonation, setContractDonation] =
+    useState<Contract<typeof abiDonation>>();
+  const [contractDerivative, setContractDerivative] =
+    useState<Contract<typeof abiDerivative>>();
 
   const router = useRouter();
 
@@ -94,13 +103,43 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
 
         const networkId = window.ethereum.networkVersion;
         if (networkId == process.env.NEXT_PUBLIC_CHAIN_ID) {
-          setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
-          setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
-          setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
+          setContractTracker(
+            new web3Instance.eth.Contract(
+              abiTracker,
+              process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS
+            )
+          );
+          setContractDonation(
+            new web3Instance.eth.Contract(
+              abiDonation,
+              process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS
+            )
+          );
+          setContractDerivative(
+            new web3Instance.eth.Contract(
+              abiDerivative,
+              process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS
+            )
+          );
         } else {
-          setContractTracker(new web3Instance.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS))
-          setContractDonation(new web3Instance.eth.Contract(abiDonation, process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS))
-          setContractDerivative(new web3Instance.eth.Contract(abiDerivative, process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS))
+          setContractTracker(
+            new web3Instance.eth.Contract(
+              abiTracker,
+              process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS
+            )
+          );
+          setContractDonation(
+            new web3Instance.eth.Contract(
+              abiDonation,
+              process.env.NEXT_PUBLIC_BLD_DONATION_CONTRACT_ADDRESS
+            )
+          );
+          setContractDerivative(
+            new web3Instance.eth.Contract(
+              abiDerivative,
+              process.env.NEXT_PUBLIC_BLD_DERIVATIVE_CONTRACT_ADDRESS
+            )
+          );
         }
         setNetwork(getNetworkName(networkId));
       } else {
@@ -115,13 +154,12 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
 
   useEffect(() => {
     async () => {
-      await getRole()
-      console.log("El role es", role)
+      await getRole();
+      console.log("El role es", role);
       if (account !== "" && role !== null && role !== 0) {
         router.push("/all-role-grid");
       }
-    }
-
+    };
   }, [account, role]);
 
   const handleConnectWallet = async () => {
@@ -167,10 +205,12 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     if (web3 && contractTracker) {
       const company = await contractTracker.methods.companies(account).call();
       // Check if it is a donor
-      console.log("Rol compañia", company.role)
+      console.log("Rol compañia", company.role);
       if (Number(company.role) === 0) {
-        const donor = await contractTracker.methods.donors(account).call({ from: account });
-        console.log("Sangre del donante", donor.bloodType)
+        const donor = await contractTracker.methods
+          .donors(account)
+          .call({ from: account });
+        console.log("Sangre del donante", donor.bloodType);
         if (donor.balance != 0) {
           setRole(4);
         } else {
@@ -180,7 +220,7 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
         setRole(Number(company.role));
       }
     }
-  }
+  };
 
   const getNetworkName = (networkId: string) => {
     switch (networkId) {
@@ -241,8 +281,8 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
     getWalletLogo,
     contractTracker,
     contractDonation,
-    contractDerivative
-  }
+    contractDerivative,
+  };
 
   return (
     <WalletContext.Provider value={contextValue}>
@@ -252,7 +292,8 @@ export const Wallet: React.FC<WalletProviderProps> = ({ children }) => {
 };
 
 const WalletButton = () => {
-  const { account,
+  const {
+    account,
     setAccount,
     network,
     setNetwork,
@@ -276,13 +317,14 @@ const WalletButton = () => {
     getWalletLogo,
     contractTracker,
     contractDonation,
-    contractDerivative } = useContext(WalletContext);
+    contractDerivative,
+  } = useContext(WalletContext);
 
   const router = useRouter();
 
   const getToWalletRole = () => {
     router.push("/all-role-grid");
-  }
+  };
 
   return (
     <div className="wallet-container">
@@ -310,8 +352,8 @@ const WalletButton = () => {
               />
               {web3?.utils.isAddress(account)
                 ? `${account.substring(0, 6)} ... ${account.substring(
-                  account.length - 4
-                )}`
+                    account.length - 4
+                  )}`
                 : account}
               <div
                 className="menu-icon"
@@ -358,6 +400,6 @@ const ConnectWalletButton = () => {
     <Wallet>
       <WalletButton></WalletButton>
     </Wallet>
-  )
-}
+  );
+};
 export default ConnectWalletButton;

@@ -1,70 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import "./../app/globals.css";
-import styles from "./registerDonation.module.css";
-import { useWallet } from "./ConnectWalletButton";
-import { isAddress } from "web3-utils";
+import React from "react";
+import Link from "next/link";
+import "./../../app/globals.css";
+import styles from "./../DonationCenter.module.css";
 
-const RegisterDonation = () => {
-  const { account } = useWallet();
-  const [donorAddress, setDonorAddress] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [donationDate, setDonationDate] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!donorAddress || !bloodType || !donationDate) {
-      setErrorMessage("All fields are required");
-      return;
-    }
-
-    if (!isAddress(donorAddress)) {
-      setErrorMessage(
-        "Please provide a valid Ethereum wallet address for the donor"
-      );
-      return;
-    }
-
-    if (!account) {
-      setErrorMessage("Connection center must be connected via MetaMask");
-      return;
-    }
-
-    setErrorMessage("");
-
-    const newDonation = {
-      donorAddress,
-      bloodType,
-      donationDate,
-      connectionCenterAddress: account,
-    };
-
-    // Mock API request
-    try {
-      const response = await fetch("/api/writeMockData", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newDonation),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      // Optionally, redirect or show success message
-      console.log("Donation registered successfully");
-    } catch (error) {
-      setErrorMessage("Error saving donation: " + error.message);
-    }
-  };
-
+const DonationCenter = ({ account }) => {
   return (
     <div>
       <div className={styles.headerSection}>
@@ -79,63 +20,40 @@ const RegisterDonation = () => {
           donor to the recipient.
         </p>
       </div>
-      <p>The wallet {account} is allowed to perform the following actions:</p>
+      <p>The wallet {account} is allow to the following actions.</p>
 
       <section>
         <div className={styles.headerSectionDos}>
-          <h1>Register a Blood Donation</h1>
+          <h1>Donation Center</h1>
           <p>
-            Please fill in the details below to register a new blood donation.
+            Your central hub for managing donations and tracking traceability.
           </p>
         </div>
-        <form onSubmit={handleSubmit} className={styles.registerForm}>
-          <div className={styles.formGroup}>
-            <label htmlFor="donorAddress">Donor Address*</label>
-            <input
-              type="text"
-              id="donorAddress"
-              value={donorAddress}
-              onChange={(e) => setDonorAddress(e.target.value)}
-              required
+        <nav className={styles.rolesGrid}>
+          <div className={styles.roleBox}>
+            <img
+              src="/AB_blood_group512px.png"
+              alt="Register Donation"
+              className={styles.roleImg}
             />
+            <Link href="/register-donation" legacyBehavior>
+              <a className={styles.roleName}>Register a Donation</a>
+            </Link>
           </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="bloodType">Blood Type*</label>
-            <select
-              id="bloodType"
-              value={bloodType}
-              onChange={(e) => setBloodType(e.target.value)}
-              required>
-              <option value="" disabled>
-                Select a blood type
-              </option>
-              {bloodTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles.formGroup}>
-            <label htmlFor="donationDate">Donation Date*</label>
-            <input
-              type="date"
-              id="donationDate"
-              value={donationDate}
-              onChange={(e) => setDonationDate(e.target.value)}
-              required
+          <div className={styles.roleBox}>
+            <img
+              src="/Blood_cell512px.png"
+              alt="Check Traceability"
+              className={styles.roleImg}
             />
+            <Link href="/check-traceability" legacyBehavior>
+              <a className={styles.roleName}>Check Traceability</a>
+            </Link>
           </div>
-          {errorMessage && (
-            <p className={styles.errorMessage}>{errorMessage}</p>
-          )}
-          <button type="submit" className={styles.submitButton}>
-            Submit
-          </button>
-        </form>
+        </nav>
       </section>
     </div>
   );
 };
 
-export default RegisterDonation;
+export default DonationCenter;
