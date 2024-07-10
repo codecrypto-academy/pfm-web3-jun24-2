@@ -8,7 +8,6 @@ import { abi as abiTracker } from "@/../../src/lib/contracts/BloodTracker";
 import { useWallet } from "./ConnectWalletButton";
 import { useRouter } from "next/navigation";
 
-
 const roles = ["Donor", "Company"];
 const companyRoles = ["Collector Center", "Laboratory", "Trader"];
 
@@ -33,7 +32,7 @@ const Register = () => {
     }
 
     setErrorMessage("");
-    var roleNum
+    var roleNum;
     switch (companyRole) {
       case "Collector Center":
         roleNum = 1;
@@ -48,11 +47,16 @@ const Register = () => {
         roleNum = 0;
         break;
     }
-    const contractTracker = new web3.eth.Contract(abiTracker, process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS);
-    const receipt = await contractTracker.methods.signUp(companyName, location, roleNum).send({ from: account, gas: '1000000', gasPrice: 1000000000 });
+    const contractTracker = new web3.eth.Contract(
+      abiTracker,
+      process.env.NEXT_PUBLIC_BLD_TRACKER_CONTRACT_ADDRESS
+    );
+    const receipt = await contractTracker.methods
+      .signUp(companyName, location, roleNum)
+      .send({ from: account, gas: "1000000", gasPrice: 1000000000 });
     setTxHash(receipt.transactionHash);
     setRole(roleNum);
-    router.push("/all-role-grid")
+    router.push("/all-role-grid");
   };
 
   return (
@@ -90,7 +94,7 @@ const Register = () => {
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="registerSanitario" className={styles.formLabel}>
-                Register Sanitario
+                Sanitary Registration
               </label>
               <input
                 type="text"
