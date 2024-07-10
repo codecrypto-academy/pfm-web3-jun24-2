@@ -135,7 +135,7 @@ const Register = () => {
       {showWalletModal && (
         <GetWalletModal onClose={() => setShowWalletModal(false)} />
       )}
-      {txHash ? <h1>The txHash is {txHash}</h1> : <></>}
+      {txHash ? <h2>The txHash is {txHash}</h2> : <></>}
     </section>
   );
 };

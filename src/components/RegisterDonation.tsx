@@ -1,25 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./../app/globals.css";
 import styles from "./registerDonation.module.css";
 import { useWallet } from "./ConnectWalletButton";
 import { isAddress } from "web3-utils";
 
 const RegisterDonation = () => {
-  const { account } = useWallet();
+  const { account, contractDonation, web3 } = useWallet();
   const [donorAddress, setDonorAddress] = useState("");
   const [bloodType, setBloodType] = useState("");
   const [donationDate, setDonationDate] = useState("");
-  const [donationCenterAddress, setDonationCenterAddress] = useState(account || "");
+  const [donationCenterAddress, setDonationCenterAddress] = useState(
+    account || ""
+  );
   const [errorMessage, setErrorMessage] = useState("");
+  const [transactionHash, setTransactionHash] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+  useEffect(() => {
+    if (account) {
+      setDonationCenterAddress(account);
+    }
+  }, [account]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!donorAddress || !bloodType || !donationDate || !donationCenterAddress) {
+    if (
+      !donorAddress ||
+      !bloodType ||
+      !donationDate ||
+      !donationCenterAddress
+    ) {
       setErrorMessage("All fields are required");
       return;
     }
@@ -29,12 +44,24 @@ const RegisterDonation = () => {
       return;
     }
 
-    if (!account) {
-      setErrorMessage("Connection center must be connected via MetaMask");
-      return;
-    }
-
     setErrorMessage("");
+    setIsLoading(true);
+
+    try {
+      const receipt = await contractDonation.methods
+        .mint(donorAddress)
+        .send({ from: account });
+
+      console.log("Token minted successfully", receipt);
+      setTransactionHash(receipt.transactionHash);
+    } catch (error) {
+      console.error("Transaction error", error);
+      setErrorMessage(
+        `Error saving donation: ${error.message || JSON.stringify(error)}`
+      );
+    } finally {
+      setIsLoading(false);
+    }
 
     const newDonation = {
       donorAddress,
@@ -43,7 +70,6 @@ const RegisterDonation = () => {
       donationCenterAddress,
     };
 
-    // Mock API request
     try {
       const response = await fetch("/api/writeMockData", {
         method: "POST",
@@ -57,7 +83,6 @@ const RegisterDonation = () => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // Optionally, redirect or show success message
       console.log("Donation registered successfully");
     } catch (error) {
       setErrorMessage("Error saving donation: " + error.message);
@@ -79,14 +104,17 @@ const RegisterDonation = () => {
         </p>
       </div>
       <div className={styles.walletInfo}>
-        <p>The wallet <strong>{account}</strong> is allowed to perform the following actions:</p>
+        <p>
+          The wallet <strong>{account}</strong> is allowed to perform the
+          following actions:
+        </p>
       </div>
       <section>
         <form onSubmit={handleSubmit} className={styles.registerForm}>
-          <div className={styles.headerSectionDos}>
-            <h1>Register a Blood Donation</h1>
-            <p>Please fill in the details below to register a new blood donation.</p>
-          </div>
+          <h1>Register a Blood Donation</h1>
+          <p>
+            Please fill in the details below to register a new blood donation.
+          </p>
           <div className={styles.formGroup}>
             <label htmlFor="donorAddress">Donor Address*</label>
             <input
@@ -125,18 +153,29 @@ const RegisterDonation = () => {
             />
           </div>
           <div className={styles.formGroup}>
-            <label htmlFor="donationCenterAddress">Donation Center Address*</label>
+            <label htmlFor="donationCenterAddress">
+              Donation Center Address*
+            </label>
             <input
               type="text"
               id="donationCenterAddress"
               value={donationCenterAddress}
-              onChange={(e) => setDonationCenterAddress(e.target.value)}
-              required
+              readOnly
             />
           </div>
-          {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-          <button type="submit" className={styles.submitButton}>
-            Submit
+          {errorMessage && (
+            <p className={styles.errorMessage}>{errorMessage}</p>
+          )}
+          {transactionHash && (
+            <p className={styles.successMessage}>
+              Transaction successful! Hash: {transactionHash}
+            </p>
+          )}
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </section>

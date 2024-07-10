@@ -58,6 +58,7 @@
 
 .formGroup {
   width: 100%;
+  margin-top: 20px;
   margin-bottom: 20px;
   text-align: left;
 }
@@ -73,4 +74,34 @@
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.errorMessage {
+  color: red;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.successMessage {
+  color: green;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.submitButton {
+  background-color: #42b883; /* Green */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #40257a; /* Purple on hover */
 }
