@@ -1,0 +1,32 @@
+Proprietary License
+
+COPYRIGHT (C) 2024 CODECRYPTO
+
+All rights reserved.
+
+Permission is hereby granted, to any person obtaining a copy of this software and associated documentation files (the "Software"), to use the Software only for personal, educational, or non-commercial purposes, subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+2. The Software may not be used for commercial purposes without the explicit permission of the copyright holder.
+
+3. The Software may not be distributed, sublicensed, or sold without the explicit permission of the copyright holder.
+
+4. The Software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the Software or the use or other dealings in the Software.
+
+
+CONTRIBUTORS
+
+This project is developed by students and members of CODECRYPTO ACADEMY. The contributors who have participated in the development of the software are listed below. All contributors are expected to comply with the terms of this license.
+
+- @aledelme
+- @cheetah-alo
+- @ewalterp
+- @juangas
+
+
+ACADEMY
+
+This project is part of the educational programs at CODECRYPTO ACADEMY. CODECRYPTO ACADEMY reserves the right to use and distribute the software within its educational programs, always in compliance with the terms set forth herein.
+
+For commercial use, licensing, or other inquiries, please contact codecrypto@codecrypto.academy.
